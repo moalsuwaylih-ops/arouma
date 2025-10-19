@@ -1,26 +1,55 @@
+/* كل @import لازم تكون في الأعلى */
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap');
 @import "tailwindcss";
 
+/* -------- ألوان وهوية Flawless كمتغيرات ------- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --flw-bg:   #f8f7fd;
+  --flw-bg2:  #fdfcff;
+  --flw-card: #ffffff;
+  --flw-line: #f0ecfa;
+  --flw-text: #3c2e7e;
+  --flw-sub:  #5b5672;
+  --flw-lilac:#a68cf1;
+  --flw-mint: #88e3c1;
+  --flw-btn:  #6a4ba3;
+  --flw-btnh: #5a3e90;
+
+  --background: var(--flw-bg);
+  --foreground: var(--flw-text);
+  --font-arabic: 'Tajawal', system-ui, -apple-system, Segoe UI, Roboto, "Noto Kufi Arabic", Arial, Helvetica, sans-serif;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-arabic);
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  :root { --background:#0a0a0a; --foreground:#ededed; }
 }
 
+/* خلفية وخط عام للموقع */
+html, body { height: 100%; }
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(180deg, var(--flw-bg) 0%, var(--flw-bg2) 60%, #fff 100%);
+  color: var(--flw-text);
+  font-family: var(--font-arabic);
 }
+
+/* كروت وأزرار ومدخلات وهوية جاهزة للاستعمال */
+.flw-card { background:var(--flw-card); border:1px solid var(--flw-line); border-radius:2rem; box-shadow:0 8px 24px rgba(130,120,160,0.08); }
+.flw-btn  { background:var(--flw-btn); color:#fff; border-radius:9999px; padding:.65rem 1.25rem; box-shadow:0 8px 24px rgba(130,120,160,0.08); transition:transform .2s, box-shadow .2s, background-color .2s; }
+.flw-btn:hover { background:var(--flw-btnh); transform:scale(1.02); box-shadow:0 10px 28px rgba(130,120,160,0.12); }
+.flw-btn-ghost { background:#fff; color:var(--flw-text); border:1px solid var(--flw-line); border-radius:9999px; padding:.6rem 1.1rem; transition:box-shadow .2s; }
+.flw-btn-ghost:hover { box-shadow:0 8px 24px rgba(130,120,160,0.08); }
+.flw-input { width:100%; background:#fff; border:1px solid var(--flw-line); border-radius:.9rem; padding:.65rem .9rem; transition:box-shadow .2s, border-color .2s; }
+.flw-input:focus { outline:none; border-color:var(--flw-lilac); box-shadow:0 0 0 6px color-mix(in srgb, var(--flw-lilac) 25%, transparent); }
+.flw-progress { height:10px; background:rgba(255,255,255,.6); border:1px solid var(--flw-line); border-radius:9999px; overflow:hidden; }
+.flw-progress > i { display:block; height:100%; background:linear-gradient(90deg, var(--flw-lilac), var(--flw-mint)); }
+
+/* تعطيل حدود/رسائل حمراء افتراضية من المتصفح للحقول المطلوبة */
+:where(input, textarea, select):required:invalid { border-color:#d1d5db !important; box-shadow:none !important; outline:none !important; }
+:where(input, textarea, select):focus:required:invalid { border-color:#a855f7 !important; box-shadow:0 0 0 1.5px rgba(168,85,247,.4) !important; outline:none !important; }
+:where(input, textarea, select):required:invalid:focus-visible { outline:none !important; box-shadow:none !important; }
