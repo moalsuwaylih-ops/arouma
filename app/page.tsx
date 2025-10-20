@@ -83,7 +83,7 @@ export default function HomePage() {
               </div>
               <div className="rounded-2xl border border-[#eaf5ff] bg-[#f7fbff] p-4 text-center">
                 <div className="text-2xl">🎯</div>
-                <p className="mt-2 font-semibold">خطة تُشبه طفلك</p>
+                <p className="mt-2 font-semibold">خطة مصممة لطفلك</p>
                 <p className="text-xs text-gray-500">توصيات عملية منزلية</p>
               </div>
             </div>
