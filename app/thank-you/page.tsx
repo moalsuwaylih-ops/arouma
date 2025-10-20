@@ -1,4 +1,23 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
 export default function ThankYouPage() {
+  const [hasResults, setHasResults] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    try {
+      const saved = typeof window !== "undefined" ? localStorage.getItem("arouma_last_results") : null;
+      setHasResults(!!saved);
+    } catch {
+      setHasResults(false);
+    }
+  }, []);
+
+  const goResults = () => {
+    if (hasResults) window.location.href = "/results";
+  };
+
   return (
     <main
       dir="rtl"
@@ -7,20 +26,32 @@ export default function ThankYouPage() {
                  text-gray-800 p-6"
     >
       <div className="bg-white rounded-[2rem] shadow-[0_4px_24px_rgba(130,120,160,0.08)] 
-                      p-10 max-w-md text-center border border-[#f0ecfa]">
-        <h1 className="text-3xl font-bold text-[#3c2e7e] mb-4">
-           شكرًا لإكمال الاستبانة💜 
+                      p-10 w-full max-w-md text-center border border-[#f0ecfa]">
+        <h1 className="text-3xl font-bold text-[#3c2e7e] mb-3">
+          شكرًا لإكمال الاستبانة 💜
         </h1>
-        <p className="text-[#5b5672] mb-8 leading-relaxed text-[1.05rem]">
-          وجودك هنا يعني الكثير، ومشاركتك تفتح طريقًا لطفلك ليُفهم أكثر، ويُنمّى بحب ووعي. 🌱
+        <p className="text-[#5b5672] mb-7 leading-relaxed text-[1.05rem]">
+          وجودك هنا يعني الكثير، ومشاركتك تفتح طريقًا لطفلك لِيُفهَم أكثر، ويُنمى بحب ووعي. 🌱
         </p>
 
+        {/* زر عرض النتيجة */}
+        <button
+          onClick={goResults}
+          disabled={hasResults === false}
+          className={`w-full px-10 py-3 rounded-full text-white font-medium shadow-md transition-all duration-300
+            ${hasResults === false
+              ? "bg-gray-300 cursor-not-allowed"
+              : "bg-gradient-to-r from-[#7b5fe8] to-[#49d5a3] hover:scale-105 hover:shadow-lg"}`}
+        >
+          {hasResults === false ? "لا توجد نتيجة محفوظة" : "اعرض نتيجة التحليل"}
+        </button>
+
+        {/* رجوع للصفحة الرئيسية */}
         <a
           href="/"
-          className="inline-block px-10 py-3 rounded-full 
-                     bg-gradient-to-r from-[#a68cf1] to-[#88e3c1] 
-                     text-white font-medium shadow-md 
-                     hover:scale-105 hover:shadow-lg transition-all duration-300"
+          className="inline-block w-full mt-3 px-10 py-3 rounded-full 
+                     border border-[#d9d3f2] text-[#3c2e7e] bg-white
+                     hover:bg-[#faf9ff] transition"
         >
           العودة إلى الصفحة الرئيسية
         </a>

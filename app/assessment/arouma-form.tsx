@@ -718,10 +718,18 @@ export default function AssessmentPage() {
       // خزّن آخر نتيجة محليًا لصفحة النتائج (اختياري لاستخدام لاحق)
       try {
         localStorage.setItem(
-          "arouma_last_submit",
-          JSON.stringify({ answers: payload.answers, meta: payload.meta, miRanking, vak, big5, env, recs })
-        );
-      } catch {}
+          "arouma_last_results",
+          JSON.stringify({
+      mi: { result: miRes, ranking: miRanking },
+      vak,
+      big5,
+      environment: env,
+      recs,
+    })
+  );
+} catch (err) {
+  console.error("تعذر حفظ النتائج محليًا:", err);
+}
 
       localStorage.removeItem("arouma_answers");
       window.location.href = "/thank-you"; // بدّل إلى /assessment/results إذا جهزت صفحة النتائج
