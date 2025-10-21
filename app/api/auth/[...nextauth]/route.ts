@@ -1,30 +1,31 @@
-// app/api/auth/[...nextauth]/route.ts
 import NextAuth, { NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 const authOptions: NextAuthOptions = {
   providers: [
     Credentials({
-      name: "Credentials",
+      name: "Email only",
       credentials: {
         email: { label: "البريد", type: "email" },
-        name: { label: "الاسم", type: "text" },
       },
       async authorize(creds) {
         const email = (creds?.email || "").trim().toLowerCase();
-        const name = (creds?.name || "").trim();
-
         const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
         if (!ok) return null;
 
-        return { id: email, email, name: name || "وليّ أمر" };
+        // ✅ نتحقق أن البريد موجود ونقرأ الاسم من القاعدة
+        const user = await prisma.user.findUnique({ where: { email } });
+        if (!user) return null;
+
+        return { id: user.email, email: user.email, name: user.name || "وليّ أمر" };
       },
     }),
   ],
   session: { strategy: "jwt" },
-  pages: {
-    signIn: "/login",
-  },
+  pages: { signIn: "/login" },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {

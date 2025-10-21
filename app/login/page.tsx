@@ -3,32 +3,33 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
-import Image from "next/image"; // ✅ لإظهار الشعار
+import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+
+  const search = useSearchParams();
+  const authErr = search.get("error") === "CredentialsSignin";
+  const justRegistered = search.get("registered") === "1";
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setErr(null);
     setLoading(true);
-
     try {
       const res = await signIn("credentials", {
         redirect: false,
         email: email.trim(),
-        name: name.trim(),
       });
-
       if (res?.error) {
-        setErr("تعذّر تسجيل الدخول. تأكد من البريد الإلكتروني وحاول مرة أخرى.");
+        setErr("هذا البريد غير مسجّل. رجاءً أنشئ حسابًا أولًا من صفحة التسجيل.");
       } else {
         window.location.href = "/assessment";
       }
-    } catch (e) {
+    } catch {
       setErr("حدث خطأ غير متوقع. حاول لاحقًا.");
     } finally {
       setLoading(false);
@@ -43,7 +44,7 @@ export default function LoginPage() {
       <div className="max-w-md w-full bg-white rounded-[2rem] shadow-[0_4px_24px_rgba(130,120,160,0.08)]
                   px-8 pt-16 pb-12 md:px-10 md:pt-16 md:pb-14 border border-[#f0ecfa] relative overflow-visible">
 
-        {/* ✅ الشعار فوق العنوان */}
+        {/* الشعار */}
         <div className="absolute -top-10 left-1/2 -translate-x-1/2">
           <Image
             src="/logo.png"
@@ -51,35 +52,25 @@ export default function LoginPage() {
             width={150}
             height={150}
             className="object-contain drop-shadow-md"
+            priority
           />
         </div>
 
-        {/* العنوان */}
-        <h1 className="text-3xl md:text-4xl font-extrabold text-center leading-[1.7] mt-6 mb-4">
-          <span className="bg-gradient-to-r from-[#6D28D9] to-[#10B981] bg-clip-text text-transparent">
-          </span>{" "}
-         
-        </h1>
-
-        <p className="mt-2 text-center text-gray-600">
-          قم بتسجيل الدخول للمتابعة
-        </p>
-
-        {/* النموذج */}
-        <form onSubmit={handleSubmit} className="mt-8 space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">الاسم</label>
-            <input
-              type="text"
-              placeholder="اكتب اسمك هنا"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full rounded-xl border border-gray-200 focus:border-purple-400 focus:ring-purple-300 px-4 py-2.5 outline-none transition"
-            />
+        {justRegistered && (
+          <div className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700 px-4 py-3 text-sm">
+            تم إنشاء الحساب بنجاح. سجّل الدخول الآن بنفس البريد.
           </div>
+        )}
 
+        <h1 className="text-3xl md:text-4xl font-extrabold text-center leading-[1.7] mt-6 mb-2" />
+
+        <p className="mt-2 text-center text-gray-600">أدخل بريدك الإلكتروني للمتابعة</p>
+
+        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">البريد الإلكتروني</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              البريد الإلكتروني
+            </label>
             <input
               type="email"
               placeholder="name@example.com"
@@ -90,24 +81,22 @@ export default function LoginPage() {
             />
           </div>
 
-          {err && (
+          {(err || authErr) && (
             <p className="text-sm text-rose-600 bg-rose-50 border border-rose-100 rounded-lg px-3 py-2">
-              {err}
+              {err || "هذا البريد غير مسجّل. رجاءً أنشئ حسابًا أولًا من صفحة التسجيل."}
             </p>
           )}
 
-          {/* زر الدخول */}
           <button
             type="submit"
             disabled={loading}
             className="w-full rounded-xl py-3 font-semibold text-white shadow-md transition
                        bg-gradient-to-r from-[#10B981] to-[#6D28D9] hover:opacity-90 disabled:opacity-60"
           >
-            {loading ? "جاري الدخول..." : "تسجيل دخول"}
+            {loading ? "جاري التحقق..." : "تسجيل دخول"}
           </button>
         </form>
 
-        {/* روابط بدون خط */}
         <div className="mt-6 text-center text-sm text-gray-600">
           <Link href="/" className="no-underline hover:text-purple-700">
             العودة إلى الصفحة الرئيسية
@@ -122,7 +111,7 @@ export default function LoginPage() {
         </div>
 
         <p className="mt-6 text-[11px] text-center text-gray-400">
-          بالضغط على الدخول، أنت توافق على سياسة الخصوصية واستخدام البيانات لأغراض التقييم فقط.
+          الدخول بالبريد فقط مبدئيًا خلال المرحلة التجريبية.
         </p>
       </div>
     </main>
