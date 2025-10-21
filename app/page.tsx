@@ -103,7 +103,7 @@ export default function HomePage() {
               <span className="bg-gradient-to-r from-[#7b5fe8] to-[#49d5a3] bg-clip-text text-transparent">
                 بعمق 
               </span>
-              ، ونبني له خطة  <span className="whitespace-nowrap">تُشبهه </span>
+                 <span className="whitespace-nowrap"> </span>
             </h1>
             <p className="mt-4 text-[1.05rem] leading-8 text-[#5b5672]">
               في <strong>أرومة</strong> نحلّل شخصية طفلك وميوله وأنماط تعلّمه باستخدام
@@ -118,13 +118,13 @@ export default function HomePage() {
                 href="/register"
                 className="flex-1 rounded-2xl bg-gradient-to-r from-[#7b5fe8] to-[#49d5a3] px-6 py-3 text-center text-white font-semibold shadow-md transition hover:scale-[1.02] hover:shadow-lg"
               >
-                ابدأ الآن مجانًا
+                ابدأ الآن 
               </Link>
               <a
-                href="#why"
+                href="/tests"
                 className="flex-1 rounded-2xl border border-[#dedaf5] bg-white px-6 py-3 text-center font-semibold text-[#3c2e7e] hover:bg-[#faf9ff] transition"
               >
-                تعرّف على الفكرة
+                 تعرف على اختبارات أرومة 
               </a>
             </div>
 
@@ -248,8 +248,10 @@ export default function HomePage() {
             href="/register"
             className="inline-block rounded-2xl bg-gradient-to-r from-[#7b5fe8] to-[#49d5a3] px-10 py-3 text-white font-semibold shadow-md transition hover:scale-[1.02] hover:shadow-lg"
           >
-            ابدأ الآن مجانًا
+            ابدأ الآن
           </Link>
+
+          
           <p className="mt-4 text-xs text-gray-500">
             بالضغط على البدء، توافق على سياسة الخصوصية واستخدام البيانات لأغراض التقييم.
           </p>

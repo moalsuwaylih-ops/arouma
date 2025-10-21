@@ -743,11 +743,26 @@ export default function AssessmentPage() {
   /* ================== الواجهة ================== */
   return (
     <main dir="rtl" className="min-h-screen text-[var(--flw-text)] p-6 md:p-12">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto"> 
+      
+      
+  
+
         {/* العنوان + شريط التقدم */}
-        <div className="flw-card p-6 mb-6">
+        <div className="flw-card p-5 md:p-6 mb-6">
+          {/* شعار أرومة */}
+          <div className="flex justify-center items-center">
+            <img
+            src="/logo.png"
+            alt="شعار أرومة"
+            className="h-24 md:h-28 w-auto object-contain drop-shadow-md"
+            />
+          </div>
+          {/* العنوان (مخفي للمظهر، مفيد للوصولية/SEO) */}
+          <h1 className="sr-only">أرومة</h1>
+
           <h1 className="text-4xl font-extrabold text-center leading-snug">
-            <span className="text-purple-700">أرومة</span> — نفهم طفلك بعمق، ونبني حوله خطة تُشبِهُه
+            <span className="text-purple-700"></span>
           </h1>
           <div className="mt-4">
             <div className="flex justify-between text-sm mb-1" style={{ color: "var(--flw-sub)" }}>
