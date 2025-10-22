@@ -123,7 +123,7 @@ export const formSections: Section[] = [
       },
       {
         id: "fears",
-        title: "هل لدى الطفل أي من هذه المخاوف؟ (اختر ما ينطبق)",
+        title: "هل لدى الطفل أي من هذه المخاوف؟ (اختر كل ما ينطبق)",
         type: "multi",
         options: [
           "الخوف من الظلام",
@@ -419,7 +419,7 @@ function computeBigFive(ans: Record<string, any>) {
   let E = 0, O = 0, A = 0, C = 0, N = 0, cntE = 0, cntO = 0, cntA = 0, cntC = 0, cntN = 0;
 
   if (ans.overall_trait) {
-    const m: Record<string, Partial<Record<'E'|'O'|'A'|'C', number>>> = {
+    const m: Record<string, Partial<Record<'E'|'O'|'A'|'C'|'N', number>>> = {
       "اجتماعي ويحب التفاعل": { E: 2 },
       "خجول ويتردد في التفاعل": { E: -2 },
       "قيادي ومبادر": { E: 1, C: 1 },
