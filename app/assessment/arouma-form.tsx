@@ -25,13 +25,35 @@ type Ans = Record<string, string | string[]>;
 
 const LIKERT_5 = ["أبدًا", "نادرًا", "أحيانًا", "غالبًا", "دائمًا"];
 
-/* ================== نموذج الأسئلة (الإصدار الجديد) ================== */
+/* ================== نموذج الأسئلة (الإصدار المحدّث) ================== */
 export const formSections: Section[] = [
   {
     id: "intro",
-    title: "تقييم شخصية وذكاءات الطفل (نموذج أرومة)",
+    title: "تقييم شخصية الطفل ",
     description:
-      "🟣 أهلاً بكم في منصة أرومة.\n🗂️ عدد الأقسام: 9 — ⏰ الوقت: 10–15 دقيقة.\n✅ أجب بصدق؛ البيانات سرية وتُستخدم للتقييم فقط. يمكنك إيقاف التعبئة والعودة لاحقًا.",
+      [
+        "🟣 أهلاً بكم في منصة أرومة",
+        "",
+        "نسعى في أرومة إلى تقديم تحليل علمي ودقيق لشخصية طفلك وذكاءاته المتنوعة، بهدف مساعدته على النمو بثقة، وتطوير قدراته في الجوانب الأكاديمية والاجتماعية والعاطفية",
+        "",
+        "🗂️ 🟢 عدد الأقسام: 8 أقسام",
+        "✅ 🟢 عدد الأسئلة: 53 سؤالًا",
+        "⏰ 🟢 الوقت المتوقع لإكمال الاستبانة: حوالي 10–15 دقيقة",
+        "",
+        "✅ تعليمات عامة",
+        "",
+        "أجب على الأسئلة بأكبر قدر ممكن من الدقة والصدق، فالإجابات الدقيقة تساعدنا في تقديم تحليل مخصص ومناسب لطفلك",
+        "",
+        "اختر دائمًا ما يحدث فعليًا في سلوك طفلك وليس ما تأمل أو تتمنى حدوثه",
+        "",
+        "جميع المعلومات ستُعامل بسرية تامة، ولن تُستخدم إلا لغرض التقييم والتخطيط",
+        "",
+        "هذه الاستبانة مخصصة للأم، الأب، أو أي ولي أمر على معرفة جيدة بالطفل",
+        "",
+        "يمكنك إيقاف تعبئة الاستبانة مؤقتًا والعودة لاحقًا في أي وقت",
+        "",
+        "💡 شكرًا لثقتك بأرومة! هدفنا دعمك في اكتشاف قدرات طفلك وتطويرها بأفضل الطرق التربوية",
+      ].join("\n"),
     questions: [
       { id: "respondent_role", title: "من يجيب على هذا النموذج؟", type: "single", required: true, options: ["الأم", "الأب", "ولي أمر آخر"] },
       { id: "guardian_name", title: "اسم ولي الأمر", type: "text", required: true },
@@ -90,6 +112,9 @@ export const formSections: Section[] = [
       { id: "p_boredom_1", title: "يشعر بسرعة بالملل إذا لم يكن هناك نشاط ممتع", type: "single", required: true, options: LIKERT_5 },
       { id: "p_detail_1", title: "يلاحظ التفاصيل الصغيرة في الأشياء من حوله", type: "single", required: true, options: LIKERT_5 },
       { id: "p_order_1", title: "يحب ترتيب أغراضه والمحافظة على النظام", type: "single", required: true, options: LIKERT_5 },
+      // (إضافة بندين للانفتاح O)
+      { id: "p_openness_1", title: "يحب تجربة أفكار أو أنشطة جديدة وغير مألوفة", type: "single", required: true, options: LIKERT_5 },
+      { id: "p_openness_2", title: "يستمتع بالخيال والابتكار أثناء اللعب أو الرسم", type: "single", required: true, options: LIKERT_5 },
     ],
   },
 
@@ -98,7 +123,7 @@ export const formSections: Section[] = [
     id: "social",
     title: "القسم الثالث: السلوك والتفاعل الاجتماعي",
     description:
-      "يهدف هذا القسم إلى فهم التفاعل مع الآخرين، التعبير الانفعالي، والتعاطف (إريكسون، فيجوتسكي، قولمان).",
+      "يهدف هذا القسم إلى فهم التفاعل مع الآخرين، التعبير الانفعالي، والتعاطف.",
     questions: [
       { id: "s_express_words", title: "يعبّر عن مشاعره بالكلمات (مثل: أنا زعلان/فرحان)", type: "single", required: true, options: LIKERT_5 },
       { id: "s_read_emotions", title: "يفهم مشاعر الآخرين من تعابير وجوههم أو نبراتهم", type: "single", required: true, options: LIKERT_5 },
@@ -154,7 +179,7 @@ export const formSections: Section[] = [
   {
     id: "family_environment",
     title: "القسم السادس: البيئة والدعم الأسري",
-    description: "نوع الدعم العاطفي والتربوي داخل الأسرة (نموذج النظم البيئية).",
+    description: "نوع الدعم العاطفي والتربوي داخل الأسرة.",
     questions: [
       { id: "f_talk_time", title: "يتم تخصيص وقت يومي للحوار مع الطفل", type: "single", required: true, options: LIKERT_5 },
       { id: "f_parent_participation", title: "يشارك أحد الوالدين الطفل في أنشطته التعليمية أو الترفيهية", type: "single", required: true, options: LIKERT_5 },
@@ -171,7 +196,7 @@ export const formSections: Section[] = [
   {
     id: "interests",
     title: "القسم السابع: الميول والهوايات العامة",
-    description: "لتحديد الذكاءات الطبيعية والأنشطة التي يستمتع بها الطفل (نظرية الذكاءات المتعددة).",
+    description: "لتحديد الذكاءات الطبيعية والأنشطة التي يستمتع بها الطفل.",
     questions: [
       { id: "i_music", title: "يستمتع بالموسيقى أو الغناء أو تقليد الأصوات", type: "single", required: true, options: LIKERT_5 },
       { id: "i_physical", title: "ينجذب إلى الأنشطة الحركية (رياضة، بناء، مساعدة في المنزل)", type: "single", required: true, options: LIKERT_5 },
@@ -188,7 +213,7 @@ export const formSections: Section[] = [
   {
     id: "goals",
     title: "القسم الثامن: الطموحات والأهداف التربوية",
-    description: "لفهم تطلعات ولي الأمر وتوجيه الخطة التربوية المخصصة (هرم ماسلو وتنمية الجوانب المتكاملة).",
+    description: "لفهم تطلعات ولي الأمر وتوجيه الخطة التربوية المخصصة.",
     questions: [
       {
         id: "priority_dev",
@@ -197,7 +222,7 @@ export const formSections: Section[] = [
         required: true,
         options: [
           "تعزيز المهارات الاجتماعية",
-          "ضبط الانفعالات والتحكم العاطلي",
+          "ضبط الانفعالات والتحكم العاطفي",
           "رفع مستوى التحصيل الدراسي",
           "تنمية الثقة بالنفس",
           "تطوير مهارات التواصل",
@@ -222,14 +247,6 @@ export const formSections: Section[] = [
         ],
       },
     ],
-  },
-
-  // قسم اختياري محجوز للتوافق (إذا كانت الواجهة تتوقع 10 أقسام)
-  {
-    id: "spacer_optional",
-    title: "قسم اختياري (محجوز)",
-    description: "لا توجد أسئلة في هذا القسم. (محجوز للتوافق مع عدد الأقسام).",
-    questions: [],
   },
 
   // الخاتمة
@@ -307,6 +324,17 @@ function computeVAK(ans: Record<string, any>) {
   let auditory = sum(auditoryIds) + 0.5 * sum(dualAuditory);
   let kinesthetic = sum(kinestheticIds);
 
+  // نسب مطلقة (من الحد الأقصى النظري)
+  const maxVisual = visualIds.length * 4 + 0.5 * dualVisual.length * 4;
+  const maxAud = auditoryIds.length * 4 + 0.5 * dualAuditory.length * 4;
+  const maxKin = kinestheticIds.length * 4;
+
+  const absolute = {
+    visual: Math.round((visual / Math.max(1, maxVisual)) * 100),
+    auditory: Math.round((auditory / Math.max(1, maxAud)) * 100),
+    kinesthetic: Math.round((kinesthetic / Math.max(1, maxKin)) * 100),
+  };
+
   // نسب مئوية على أساس أعلى نمط (تطبيع نسبي)
   const max = Math.max(visual, auditory, kinesthetic, 1);
   const percent = {
@@ -315,7 +343,7 @@ function computeVAK(ans: Record<string, any>) {
     kinesthetic: Math.round((kinesthetic / max) * 100),
   };
   const ranking = (Object.keys(percent) as Array<keyof typeof percent>).sort((a, b) => percent[b] - percent[a]);
-  return { raw: { visual, auditory, kinesthetic }, percent, ranking };
+  return { raw: { visual, auditory, kinesthetic }, percent, absolute, ranking };
 }
 
 /* ======== Big Five (باستخدام بنود القسم الثاني الجديدة) ======== */
@@ -327,13 +355,17 @@ function computeBigFive(ans: Record<string, any>) {
     ["p_extraversion_1", "E", 1],
     ["p_introversion_1", "E", -1],
     ["p_agreeableness_1", "A", 1],
-    ["p_assertiveness_1", "E", 1], // تأكيد الذات نقرّبه للانبساط
-    ["p_cautious_1", "N", 1],      // حذر/تردد قرب العصابية
+    ["p_assertiveness_1", "E", 1],
+    ["p_cautious_1", "N", 1],
     ["p_calm_1", "N", -1],
     ["p_expressive_1", "E", 1],
-    ["p_boredom_1", "N", 1],
+    // الملل السريع ↦ انخفاض C
+    ["p_boredom_1", "C", -1],
     ["p_detail_1", "C", 1],
     ["p_order_1", "C", 1],
+    // الانفتاح (O) المضافة
+    ["p_openness_1", "O", 1],
+    ["p_openness_2", "O", 1],
   ];
 
   for (const [qid, dim, sign] of map) {
@@ -349,7 +381,7 @@ function computeBigFive(ans: Record<string, any>) {
     if (!cnt) return 50;
     const min = -2 * cnt, max = 2 * cnt;
     return Math.round(((v - min) / (max - min)) * 100);
-    };
+  };
   const percent = { E: norm(E, cntE), O: norm(O, cntO), A: norm(A, cntA), C: norm(C, cntC), N: norm(N, cntN) };
   return { raw: { E, O, A, C, N }, percent, counts: { cntE, cntO, cntA, cntC, cntN } };
 }
@@ -371,8 +403,8 @@ function computeEnvironment(ans: Record<string, any>) {
   const max = ids.length * 4;
   const percent = Math.round((sum / max) * 100);
   let level = "متوسط";
-  if (percent >= 70) level = "عالي";
-  else if (percent <= 35) level = "منخفض";
+  if (percent >= 66) level = "عال";
+  else if (percent <= 33) level = "منخفض";
   return { supportScore: sum, supportPercent: percent, level };
 }
 
@@ -456,7 +488,8 @@ export default function AssessmentPage() {
   );
 
   const isStepValid = useMemo(() => {
-    return requiredIds.every((id) => {
+    // تحقق عام للحقول المطلوبة
+    const baseValid = requiredIds.every((id) => {
       const q = current.questions.find((qq) => qq.id === id);
       const v = answers[id];
 
@@ -468,6 +501,18 @@ export default function AssessmentPage() {
       if (q?.type === "phone") return isValidPhone(sv);
       return true;
     });
+
+    if (!baseValid) return false;
+
+    // تحقق شرطي (داخل قسم البيانات الأساسية)
+    if (current.id === "basic") {
+      const diagFlag = String(answers["diagnosis_flag"] || "");
+      const therapy = String(answers["therapy"] || "");
+      if (diagFlag === "نعم" && !String(answers["diagnosis_details"] || "").trim()) return false;
+      if (therapy === "نعم" && !String(answers["therapy_details"] || "").trim()) return false;
+    }
+
+    return true;
   }, [answers, requiredIds, current]);
 
   const progress = Math.round(((step + 1) / totalSteps) * 100);
@@ -496,7 +541,7 @@ export default function AssessmentPage() {
     setErrorMsg(null);
 
     try {
-      // 1) حساب كل التحليلات (اعتمادًا على المعرفات الجديدة)
+      // 1) حساب كل التحليلات
       const { result: miRes, ranking: miRanking } = computeMiScores(answers);
       const vak = computeVAK(answers);
       const big5 = computeBigFive(answers);
@@ -516,9 +561,12 @@ export default function AssessmentPage() {
 
       // 3) فَلط VAK / BigFive / Environment / Recs
       const vakFlat = {
-        vak_visual: vak.percent.visual,
-        vak_auditory: vak.percent.auditory,
-        vak_kinesthetic: vak.percent.kinesthetic,
+        vak_visual_rel: vak.percent.visual,
+        vak_auditory_rel: vak.percent.auditory,
+        vak_kinesthetic_rel: vak.percent.kinesthetic,
+        vak_visual_abs: vak.absolute.visual,
+        vak_auditory_abs: vak.absolute.auditory,
+        vak_kinesthetic_abs: vak.absolute.kinesthetic,
         vak_top: vak.ranking[0] ?? "",
       };
       const big5Flat = {
