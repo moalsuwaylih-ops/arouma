@@ -23,12 +23,15 @@ export interface Section {
 
 type Ans = Record<string, string | string[]>;
 
+const LIKERT_5 = ["أبدًا", "نادرًا", "أحيانًا", "غالبًا", "دائمًا"];
+
+/* ================== نموذج الأسئلة (الإصدار الجديد) ================== */
 export const formSections: Section[] = [
   {
     id: "intro",
-    title: "اختبار أرومة",
+    title: "تقييم شخصية وذكاءات الطفل (نموذج أرومة)",
     description:
-      "🟣 أهلاً بكم في منصة أرومة.\nعدد الأقسام: 8 — عدد الأسئلة: 48 — الوقت: 10–15 دقيقة.\nأجب بصدق؛ البيانات سرية وتُستخدم للتقييم فقط.",
+      "🟣 أهلاً بكم في منصة أرومة.\n🗂️ عدد الأقسام: 9 — ⏰ الوقت: 10–15 دقيقة.\n✅ أجب بصدق؛ البيانات سرية وتُستخدم للتقييم فقط. يمكنك إيقاف التعبئة والعودة لاحقًا.",
     questions: [
       { id: "respondent_role", title: "من يجيب على هذا النموذج؟", type: "single", required: true, options: ["الأم", "الأب", "ولي أمر آخر"] },
       { id: "guardian_name", title: "اسم ولي الأمر", type: "text", required: true },
@@ -38,12 +41,15 @@ export const formSections: Section[] = [
       { id: "child_name", title: "اسم الطفل", type: "text", required: true },
     ],
   },
+
+  // القسم 1: بيانات أساسية عن الطفل
   {
     id: "basic",
     title: "القسم الأول: بيانات أساسية عن الطفل",
     questions: [
-      { id: "age", title: "عمر الطفل", type: "single", required: true, options: ["أقل من 4 سنوات", "4–6 سنوات", "7–9 سنوات", "10–13 سنة"] },
       { id: "gender", title: "الجنس", type: "single", required: true, options: ["ذكر", "أنثى"] },
+      { id: "age", title: "عمر الطفل", type: "single", required: true, options: ["أقل من 4 سنوات", "4–6 سنوات", "7–9 سنوات", "10–13 سنة"] },
+      { id: "birth_order", title: "ترتيب الطفل بين إخوته", type: "single", required: true, options: ["الأول", "الأوسط", "الأصغر", "وحيد"] },
       {
         id: "grade",
         title: "المرحلة الدراسية",
@@ -60,477 +66,314 @@ export const formSections: Section[] = [
           "الصف السادس الابتدائي",
         ],
       },
-      {
-        id: "diagnosis",
-        title: "هل لدى الطفل أي احتياجات خاصة أو تشخيصات تعليمية أو سلوكية؟ (اكتبها إن وجدت)",
-        type: "text",
-        required: false,
-      },
-      { id: "therapy", title: "هل يتناول الطفل أي علاج نفسي أو دوائي حالياً؟", type: "single", required: true, options: ["نعم", "لا"] },
+      { id: "diagnosis_flag", title: "هل لدى الطفل أي احتياجات خاصة أو تشخيصات تعليمية/سلوكية؟", type: "single", required: true, options: ["لا", "نعم"] },
+      { id: "diagnosis_details", title: "اذكر أي تشخيص طبي/تربوي (مثل فرط الحركة، صعوبات تعلم، توحد، تأخر الكلام...)", type: "text" },
+      { id: "therapy", title: "هل يتناول الطفل أي علاج نفسي أو دوائي حالياً؟", type: "single", required: true, options: ["لا", "نعم"] },
+      { id: "therapy_details", title: "إذا كانت الإجابة نعم، اذكر نوع العلاج/الدواء", type: "text" },
     ],
   },
+
+  // القسم 2: وصف شخصية الطفل العامة (Big Five / Temperament)
   {
     id: "personality",
     title: "القسم الثاني: وصف شخصية الطفل العامة",
+    description:
+      "يركز هذا القسم على السمات العامة مثل الانفتاح، الانضباط الذاتي، الانبساط، والمرونة الانفعالية.",
     questions: [
-      {
-        id: "overall_trait",
-        title: "كيف تصف شخصية طفلك بشكل عام؟ (الصفة الأقرب)",
-        type: "single",
-        required: true,
-        options: [
-          "هادئ ومتحفظ",
-          "اجتماعي ويحب التفاعل",
-          "خجول ويتردد في التفاعل",
-          "حساس وعاطفي",
-          "قيادي ومبادر",
-          "متعاون ويحب العمل الجماعي",
-          "مستقل ويفضل إنجاز المهام بنفسه",
-        ],
-      },
-      {
-        id: "change_response",
-        title: "كيف يستجيب طفلك للمواقف الجديدة أو التغيرات المفاجئة؟",
-        type: "single",
-        required: true,
-        options: ["يتأقلم بسرعة دون قلق", "يحتاج إلى بعض الوقت للتأقلم", "يظهر ترددًا أو قلقًا واضحًا", "يرفض التغيير أو ينسحب تمامًا"],
-      },
-      {
-        id: "emotion_expression",
-        title: "هل يميل طفلك إلى إظهار عواطفه؟",
-        type: "single",
-        required: true,
-        options: ["نعم، يعبر عنها بوضوح وبكثرة", "أحيانًا، في مواقف محددة فقط", "لا، يميل إلى كتمان مشاعره"],
-      },
-      {
-        id: "free_time",
-        title: "عند وجود وقت فراغ، ما نوع الأنشطة التي يفضلها طفلك غالبًا؟",
-        type: "single",
-        required: true,
-        options: [
-          "أنشطة هادئة (رسم، قراءة، تركيب مكعبات)",
-          "أنشطة حركية (ركض، قفز، ألعاب جسدية)",
-          "أنشطة اجتماعية (اللعب مع أطفال آخرين)",
-          "أنشطة فردية (اللعب وحده، تأمل، خيال)",
-        ],
-      },
-      {
-        id: "mood_stability",
-        title: "ما مدى ثبات مزاج طفلك خلال اليوم؟",
-        type: "single",
-        required: true,
-        options: ["ثابت ومزاجه متوازن", "يتقلب قليلًا حسب الموقف", "سريع الانفعال ويصعب التنبؤ بمزاجه"],
-      },
-      {
-        id: "fears",
-        title: "هل لدى الطفل أي من هذه المخاوف؟ (اختر كل ما ينطبق)",
-        type: "multi",
-        options: [
-          "الخوف من الظلام",
-          "الأصوات المرتفعة",
-          "الحيوانات",
-          "الأشخاص الغرباء أو الأماكن الجديدة",
-          "القلق عند الانفصال عن الأهل",
-          "حساسية من روائح/أقمشة/لمس",
-          "لا توجد مخاوف واضحة",
-        ],
-      },
+      { id: "p_extraversion_1", title: "يتفاعل الطفل بسهولة مع الآخرين ويحب التعارف", type: "single", required: true, options: LIKERT_5 },
+      { id: "p_introversion_1", title: "يفضل اللعب أو العمل بمفرده", type: "single", required: true, options: LIKERT_5 },
+      { id: "p_agreeableness_1", title: "يتقبل التوجيه والنصائح بسهولة", type: "single", required: true, options: LIKERT_5 },
+      { id: "p_assertiveness_1", title: "يصرّ على آرائه حتى لو خالفه الآخرون", type: "single", required: true, options: LIKERT_5 },
+      { id: "p_cautious_1", title: "يتعامل مع المواقف الجديدة بحذر أو تردد", type: "single", required: true, options: LIKERT_5 },
+      { id: "p_calm_1", title: "يظهر عليه الهدوء أغلب الوقت", type: "single", required: true, options: LIKERT_5 },
+      { id: "p_expressive_1", title: "يتحدث كثيرًا ويعبّر عن مشاعره بسهولة", type: "single", required: true, options: LIKERT_5 },
+      { id: "p_boredom_1", title: "يشعر بسرعة بالملل إذا لم يكن هناك نشاط ممتع", type: "single", required: true, options: LIKERT_5 },
+      { id: "p_detail_1", title: "يلاحظ التفاصيل الصغيرة في الأشياء من حوله", type: "single", required: true, options: LIKERT_5 },
+      { id: "p_order_1", title: "يحب ترتيب أغراضه والمحافظة على النظام", type: "single", required: true, options: LIKERT_5 },
     ],
   },
+
+  // القسم 3: السلوك والتفاعل الاجتماعي
   {
     id: "social",
     title: "القسم الثالث: السلوك والتفاعل الاجتماعي",
+    description:
+      "يهدف هذا القسم إلى فهم التفاعل مع الآخرين، التعبير الانفعالي، والتعاطف (إريكسون، فيجوتسكي، قولمان).",
     questions: [
-      {
-        id: "initiate_interaction",
-        title: "في المدرسة أو المناسبات، كيف يبادر طفلك بالتفاعل؟",
-        type: "single",
-        required: true,
-        options: ["يبدأ بالتحدث واللعب مع الآخرين دون تردد", "يراقب أولاً ثم ينضم تدريجيًا", "ينتظر أن يدعوه الآخرون للمشاركة", "يفضل الانسحاب والبقاء وحده"],
-      },
-      { id: "rules", title: "كيف يتعامل طفلك مع القواعد والتعليمات الاجتماعية (الدور، الاستئذان...)", type: "single", required: true, options: ["يلتزم بها", "يحتاج تذكيرًا أحيانًا", "غالبًا يخالف القواعد"] },
-      { id: "strangers", title: "كيف يتعامل طفلك مع الأشخاص الجدد؟", type: "single", required: true, options: ["يتحدث معهم بسهولة", "يتردد في البداية ثم يعتاد", "يرفض التفاعل ويطلب الانسحاب"] },
-      { id: "diversity", title: "استجابة الطفل لأطفال من أعمار/خلفيات مختلفة", type: "single", required: true, options: ["يتقبل الجميع ويتفاعل بسهولة", "يفضل من هم في عمره فقط", "يتجنب من يختلفون عنه"] },
-      {
-        id: "empathy_behavior",
-        title: "تصرفه عند رؤية شخص حزين",
-        type: "single",
-        required: true,
-        options: ["يساعد أو يواسيه", "يتحدث ويسأل ما الأمر", "يُظهر اهتمامًا دون تدخل", "لا يلاحظ", "يبتعد", "يتأثر نفسيًا"],
-      },
-      {
-        id: "friendships",
-        title: "ما مدى سهولة تكوين علاقات أو صداقات جديدة؟",
-        type: "single",
-        required: true,
-        options: ["يحب التعرف على أصدقاء جدد دائمًا", "يفضل البقاء مع أصدقائه الحاليين", "لا يهتم كثيرًا", "يجد صعوبة في الحفاظ على الأصدقاء"],
-      },
+      { id: "s_express_words", title: "يعبّر عن مشاعره بالكلمات (مثل: أنا زعلان/فرحان)", type: "single", required: true, options: LIKERT_5 },
+      { id: "s_read_emotions", title: "يفهم مشاعر الآخرين من تعابير وجوههم أو نبراتهم", type: "single", required: true, options: LIKERT_5 },
+      { id: "s_soothe_others", title: "يحاول تهدئة من حوله عندما يراهم حزينين أو غاضبين", type: "single", required: true, options: LIKERT_5 },
+      { id: "s_frustration", title: "يبكي أو يغضب بسهولة عندما يُمنع من شيء يحبه", type: "single", required: true, options: LIKERT_5 },
+      { id: "s_self_control", title: "يستطيع ضبط نفسه عندما يُطلب منه الانتظار", type: "single", required: true, options: LIKERT_5 },
+      { id: "s_cooperate", title: "يتعاون بسهولة مع الأطفال الآخرين أثناء اللعب", type: "single", required: true, options: LIKERT_5 },
+      { id: "s_confidence_public", title: "يُظهر ثقة عند التحدث أمام الآخرين", type: "single", required: true, options: LIKERT_5 },
     ],
   },
+
+  // القسم 4: أنماط التعلم المفضلة (VAK & Kolb)
   {
     id: "learning_styles",
-    title: "القسم الرابع: أنماط التعلم المفضلة (VAK)",
+    title: "القسم الرابع: أنماط التعلم المفضلة",
+    description:
+      "لتحديد الطريقة التي يتعلم بها الطفل بشكل أفضل (بصري، سمعي، حركي/عملي).",
     questions: [
-      {
-        id: "senses",
-        title: "أي من الحواس يعتمد عليها طفلك أكثر عند التعلم؟ (يمكن اختيار أكثر من خيار)",
-        type: "multi",
-        options: ["النظر", "السمع", "الحركة واللمس", "الكتابة أو الرسم", "التكرار اللفظي"],
-      },
-      { id: "new_skill_approach", title: "عند تعلم مهارة جديدة، كيف يتعامل معها؟", type: "single", required: true, options: ["يريد المشاهدة أولًا", "يجرب مباشرة", "يسأل كثيرًا ويستمع جيدًا", "لا يُظهر رغبة واضحة"] },
-      { id: "content_pref", title: "نوع القصص/البرامج المفضلة", type: "single", required: true, options: ["قصص مصورة/رسوم متحركة", "قصص صوتية", "برامج أنشطة وتجارب", "لا يهتم كثيرًا"] },
-      { id: "hands_on", title: "هل يُظهر اهتمامًا بتجريب الأشياء بيديه؟ (تركيب، لمس المواد، طين/رمل)", type: "single", required: true, options: ["دائمًا", "أحيانًا", "نادرًا", "لا يهتم"] },
-      { id: "best_explain", title: "أفضل أسلوب لشرح شيء للطفل", type: "single", required: true, options: ["صور/رسومات", "الشرح بالكلام/القصة", "أن يجرب بنفسه", "غير واضح بعد"] },
+      { id: "l_visual_1", title: "يلاحظ الصور والرسومات أكثر من الكلمات", type: "single", required: true, options: LIKERT_5 },
+      { id: "l_visual_2", title: "يتذكر شكل الصفحة أو مكان الشيء بسهولة", type: "single", required: true, options: LIKERT_5 },
+      { id: "l_auditory_1", title: "يفهم أكثر عندما يسمع شرحًا صوتيًا", type: "single", required: true, options: LIKERT_5 },
+      { id: "l_auditory_2", title: "يكرر المعلومات بصوت منخفض ليتذكرها", type: "single", required: true, options: LIKERT_5 },
+      { id: "l_kinesthetic_1", title: "يتعلم أفضل عندما يجرب بيديه أو يتحرك أثناء التعلم", type: "single", required: true, options: LIKERT_5 },
+      { id: "l_kinesthetic_2", title: "يجد صعوبة في التركيز إذا جلس دون حركة طويلة", type: "single", required: true, options: LIKERT_5 },
+      { id: "l_visual_3", title: "يحب استخدام الألوان والرسم أثناء الدراسة", type: "single", required: true, options: LIKERT_5 },
+      { id: "l_imagery_1", title: "يتخيل الصور والمشاهد في ذهنه عند التعلم", type: "single", required: true, options: LIKERT_5 },
+      { id: "l_media_1", title: "يفضل القصص أو الفيديوهات أكثر من الشرح النظري", type: "single", required: true, options: LIKERT_5 },
+      { id: "l_hands_on_1", title: "يطلب تجربة الشيء بنفسه لفهمه", type: "single", required: true, options: LIKERT_5 },
+      { id: "l_modeling_1", title: "يتعلم من خلال ملاحظة وتقليد الآخرين", type: "single", required: true, options: LIKERT_5 },
+      { id: "l_dual_1", title: "يفهم أكثر عندما يجمع بين السماع والرؤية معًا", type: "single", required: true, options: LIKERT_5 },
     ],
   },
+
+  // القسم 5: الدافعية والتحفيز (Maslow & SDT)
   {
-    id: "multiple_intelligences",
-    title: "القسم الخامس: تقييم الذكاءات المتعددة",
+    id: "motivation",
+    title: "القسم الخامس: الدافعية والتحفيز",
+    description: "ما الذي يدفع الطفل للتعلم والإنجاز (المكافأة، التحدي، الإنجاز الذاتي).",
     questions: [
-      ...[
-        "يحب حل الألغاز أو الألعاب الذهنية والمنطقية",
-        "يطرح الكثير من الأسئلة ويحب الاكتشاف",
-        "يستمتع بالرسم أو التلوين أو الأعمال الفنية",
-        "يتذكر القرآن أو الأغاني أو الأناشيد بسرعة",
-        "يتذكر الأماكن والاتجاهات جيدًا",
-        "يحب العمل مع الآخرين والتعاون",
-        "يفضل اللعب منفردًا ولا يمل من الجلوس لوحده",
-        "يعبر عن مشاعره بسهولة",
-        "يتحرك كثيرًا ويحب الأنشطة البدنية",
-        "يحب الحيوانات أو البيئة أو الطبيعة",
-        "يظهر تعاطفًا مع مشاعر الآخرين",
-        "يحب تأليف القصص أو تمثيلها أو سماعها",
-      ].map((t, i) => ({
-        id: `mi_${i + 1}`,
-        title: t,
-        type: "single" as const,
-        required: true,
-        options: ["دائماً", "أحياناً", "نادراً", "أبداً"],
-      })),
+      { id: "m_reward_1", title: "ينجز المهام عندما يحصل على تشجيع أو جائزة", type: "single", required: true, options: LIKERT_5 },
+      { id: "m_challenge_1", title: "يحب التحدي ويندفع لإثبات قدرته", type: "single", required: true, options: LIKERT_5 },
+      { id: "m_attention_drop", title: "يفقد الحماس بسرعة إذا لم ينتبه أحد لجهده", type: "single", required: true, options: LIKERT_5 },
+      { id: "m_persistence_1", title: "يستمر في المحاولة حتى ينجح دون أن يُطلب منه", type: "single", required: true, options: LIKERT_5 },
+      { id: "m_intrinsic_1", title: "يواصل أداء المهمة حتى دون مكافأة أو مديح", type: "single", required: true, options: LIKERT_5 },
+      { id: "m_pride_1", title: "يشعر بالفخر عند سماع كلمات تشجيعية مثل “أحسنت”", type: "single", required: true, options: LIKERT_5 },
+      { id: "m_relevance_1", title: "يتعلم أكثر عندما يفهم سبب أهمية المهمة", type: "single", required: true, options: LIKERT_5 },
+      { id: "m_feedback_1", title: "يطلب معرفة النتيجة أو تقييم أدائه بعد كل مهمة", type: "single", required: true, options: LIKERT_5 },
+      { id: "m_group_1", title: "يتحمس أكثر عند العمل ضمن مجموعة", type: "single", required: true, options: LIKERT_5 },
     ],
   },
-  {
-    id: "communication_emotions",
-    title: "القسم السادس: التواصل والانفعالات",
-    questions: [
-      {
-        id: "peer_style",
-        title: "كيف يتفاعل غالبًا مع الأطفال الآخرين؟",
-        type: "single",
-        required: true,
-        options: [
-          "يحب اللعب الجماعي ويشارك",
-          "يفضل اللعب الفردي",
-          "يقود المجموعة وينظم اللعب",
-          "يتبع الآخرين ولا يبادر",
-          "يتعاون عند وجود تعليمات واضحة",
-          "يُظهر عنادًا أحيانًا",
-        ],
-      },
-      {
-        id: "obey_adults",
-        title: "استجابته لأوامر/تعليمات البالغين",
-        type: "single",
-        required: true,
-        options: ["يستجيب مباشرة", "يحتاج تكرار التوجيه", "يُظهر مقاومة أحيانًا", "يتجاهل عمدًا", "حسب مزاجه", "بعد شرح السبب والمنطق"],
-      },
-      {
-        id: "express_when_upset",
-        title: "عندما يشعر بالحزن/الغضب، كيف يعبّر؟",
-        type: "single",
-        required: true,
-        options: ["بالكلام", "بالبكاء", "بعنف أحيانًا", "بالانسحاب/الصمت", "بالرسم/الكتابة/اللعب", "لا يعبّر بسهولة"],
-      },
-      {
-        id: "conflict_style",
-        title: "عند خلاف مع طفل آخر، السلوك الغالب؟",
-        type: "single",
-        required: true,
-        options: ["يحاول الحل بالكلام", "يغضب أو ينسحب فورًا", "يشتكي لشخص بالغ", "يدافع جسديًا", "يتجاهل", "يعتمد على الآخر"],
-      },
-      {
-        id: "empathy_level",
-        title: "ما مدى قدرته على التعاطف؟",
-        type: "single",
-        required: true,
-        options: [
-          "يلاحظ ويتفاعل بسهولة",
-          "يتعاطف مع القريبين فقط",
-          "لا يهتم كثيرًا",
-          "أحيانًا حسب حالته النفسية",
-          "يسخر/يستهين بمشاعر غيره",
-          "يحتاج تذكيرًا للتفهم",
-        ],
-      },
-      {
-        id: "mood_swings",
-        title: "هل يُظهر تقلبات في المزاج؟",
-        type: "single",
-        required: true,
-        options: ["نادرًا، مزاجه مستقر", "انفعالات شديدة أحيانًا", "يتنقل بين مشاعر بسرعة", "استجابات متوازنة", "يتوتر في التغيير/الضغط", "يصعب التنبؤ بردود فعله"],
-      },
-    ],
-  },
+
+  // القسم 6: البيئة والدعم الأسري (Bronfenbrenner)
   {
     id: "family_environment",
-    title: "القسم السابع: البيئة الأسرية والدعم",
+    title: "القسم السادس: البيئة والدعم الأسري",
+    description: "نوع الدعم العاطفي والتربوي داخل الأسرة (نموذج النظم البيئية).",
     questions: [
-      { id: "main_caregiver", title: "من أكثر شخص يقضي معه الطفل معظم الوقت؟", type: "single", required: true, options: ["الأم", "الأب", "الجد/الجدة", "المربية", "الإخوة", "شخص آخر"] },
-      {
-        id: "relationship_quality",
-        title: "كيف تصف علاقتك بالطفل؟",
-        type: "single",
-        required: true,
-        options: ["قوية جدًا ومليئة بالثقة", "جيدة وفيها تواصل", "متوترة أو متقلبة", "محدودة بسبب ظروف", "لا توجد علاقة مباشرة"],
-      },
-      {
-        id: "daily_time",
-        title: "هل تخصص وقتًا يوميًا للعب/الحديث معه؟",
-        type: "single",
-        required: true,
-        options: ["يوميًا ومنتظم", "نعم ولكن ليس كل يوم", "نادرًا", "لا وقت منتظم", "يعتمد على الفراغ"],
-      },
-      {
-        id: "decisions",
-        title: "من يتخذ القرارات التربوية؟",
-        type: "single",
-        required: true,
-        options: ["أحد الوالدين", "كلا الوالدين", "الجد/الجدة", "المربية", "لا نمط محدد", "لا قرارات واضحة"],
-      },
-      {
-        id: "parenting_style",
-        title: "أسلوب التربية الغالب في المنزل",
-        type: "single",
-        required: true,
-        options: ["حازم مع حوار", "صارم يعتمد على العقاب", "متساهل غالبًا بدون حدود", "متوازن ومرن", "غير واضح/غير متماسك"],
-      },
-      {
-        id: "behavior_handling",
-        title: "عند ظهور مشكلات سلوكية، كيف يتم التعامل؟",
-        type: "single",
-        required: true,
-        options: ["التحدث وشرح الخطأ", "العقاب المباشر", "التجاهل", "التهديد/الصراخ", "اللجوء لجهة أخرى"],
-      },
+      { id: "f_talk_time", title: "يتم تخصيص وقت يومي للحوار مع الطفل", type: "single", required: true, options: LIKERT_5 },
+      { id: "f_parent_participation", title: "يشارك أحد الوالدين الطفل في أنشطته التعليمية أو الترفيهية", type: "single", required: true, options: LIKERT_5 },
+      { id: "f_autonomy", title: "يتم تشجيع الطفل على اتخاذ قرارات بسيطة بنفسه", type: "single", required: true, options: LIKERT_5 },
+      { id: "f_praise", title: "يحصل على كلمات دعم وثناء من والديه بانتظام", type: "single", required: true, options: LIKERT_5 },
+      { id: "f_opinion", title: "يُسمح له بالتعبير عن رأيه بحرية", type: "single", required: true, options: LIKERT_5 },
+      { id: "f_guidance_over_punish", title: "يتم تصحيح السلوك بالحديث أكثر من العقاب", type: "single", required: true, options: LIKERT_5 },
+      { id: "f_routine", title: "يوجد في المنزل روتين واضح للنوم والدراسة واللعب", type: "single", required: true, options: LIKERT_5 },
+      { id: "f_disclosure", title: "يشعر بالراحة عند التحدث مع والديه عن مشاكله", type: "single", required: true, options: LIKERT_5 },
     ],
   },
+
+  // القسم 7: الميول والهوايات العامة (Interests & MI)
+  {
+    id: "interests",
+    title: "القسم السابع: الميول والهوايات العامة",
+    description: "لتحديد الذكاءات الطبيعية والأنشطة التي يستمتع بها الطفل (نظرية الذكاءات المتعددة).",
+    questions: [
+      { id: "i_music", title: "يستمتع بالموسيقى أو الغناء أو تقليد الأصوات", type: "single", required: true, options: LIKERT_5 },
+      { id: "i_physical", title: "ينجذب إلى الأنشطة الحركية (رياضة، بناء، مساعدة في المنزل)", type: "single", required: true, options: LIKERT_5 },
+      { id: "i_puzzles", title: "يحب حل الألغاز أو الأسئلة التي تتطلب تفكيرًا", type: "single", required: true, options: LIKERT_5 },
+      { id: "i_nature", title: "يحب الطبيعة أو الحيوانات ويهتم بمراقبتها", type: "single", required: true, options: LIKERT_5 },
+      { id: "i_art", title: "يحب الرسم أو التلوين أو الأعمال الفنية", type: "single", required: true, options: LIKERT_5 },
+      { id: "i_storytelling", title: "يحب النقاش أو سرد القصص", type: "single", required: true, options: LIKERT_5 },
+      { id: "i_team", title: "يحب الألعاب الجماعية ويتفاعل اجتماعيًا بسهولة", type: "single", required: true, options: LIKERT_5 },
+      { id: "i_introspective", title: "يميل إلى التأمل والهدوء والانعزال أحيانًا", type: "single", required: true, options: LIKERT_5 },
+    ],
+  },
+
+  // القسم 8: الطموحات والأهداف التربوية
   {
     id: "goals",
     title: "القسم الثامن: الطموحات والأهداف التربوية",
+    description: "لفهم تطلعات ولي الأمر وتوجيه الخطة التربوية المخصصة (هرم ماسلو وتنمية الجوانب المتكاملة).",
     questions: [
       {
         id: "priority_dev",
-        title: "أكثر جانب ترغب في تنميته",
+        title: "ما أكثر جانب ترغب في تنميته لدى طفلك في هذه المرحلة؟",
         type: "single",
         required: true,
         options: [
           "تعزيز المهارات الاجتماعية",
-          "ضبط الانفعالات",
-          "رفع التحصيل الدراسي",
+          "ضبط الانفعالات والتحكم العاطلي",
+          "رفع مستوى التحصيل الدراسي",
           "تنمية الثقة بالنفس",
           "تطوير مهارات التواصل",
           "زيادة الاستقلالية",
-          "لا أعلم، أحتاج توجيهًا",
+          "لا أعلم تحديدًا، أحتاج مساعدة في التوجيه",
+          "أخرى",
         ],
       },
       {
         id: "activities_wanted",
-        title: "نوع الأنشطة المرغوبة بشكل منتظم",
+        title: "ما نوع الأنشطة التي تود لطفلك أن يمارسها بشكل منتظم؟",
         type: "multi",
-        options: ["أنشطة رياضية أو حركية", "أنشطة فنية", "أنشطة ذهنية", "أنشطة اجتماعية", "دورات مهارية", "أنشطة دينية أو قيمية", "لا أعلم"],
-      },
-      {
-        id: "plan_interest",
-        title: "مدى اهتمامك بالحصول على خطة تعليمية/تربوية مخصصة تساعد في تنمية طفلك",
-        type: "single",
-        required: true,
-        options: ["مهتم جدًا وأرغب بتنفيذها الآن", "مهتم وأحتاج توضيحًا", "مهتم على المدى الطويل", "غير مهتم حاليًا", "لست متأكدًا"],
+        options: [
+          "أنشطة رياضية أو حركية",
+          "أنشطة فنية (رسم، موسيقى، أشغال)",
+          "أنشطة ذهنية (ألعاب ذكاء، قراءة)",
+          "أنشطة اجتماعية (العمل الجماعي، الرحلات)",
+          "دورات مهارية (لغة، برمجة، منطق)",
+          "أنشطة دينية أو قيمية",
+          "لا أعلم أو لم نجرب أنشطة بعد",
+          "أخرى",
+        ],
       },
     ],
   },
-  { id: "final", title: "خاتمة الاستبانة", questions: [{ id: "notes", title: "هل لديك أي ملاحظات إضافية أو معلومات تود مشاركتها؟", type: "text" }] },
+
+  // قسم اختياري محجوز للتوافق (إذا كانت الواجهة تتوقع 10 أقسام)
+  {
+    id: "spacer_optional",
+    title: "قسم اختياري (محجوز)",
+    description: "لا توجد أسئلة في هذا القسم. (محجوز للتوافق مع عدد الأقسام).",
+    questions: [],
+  },
+
+  // الخاتمة
+  {
+    id: "final",
+    title: "خاتمة الاستبانة",
+    description:
+      "🟣 شكرًا لك على وقتك. نستخدم البيانات بسرية لتحليل شخصية وذكاءات طفلك وتقديم خطة تعليمية مخصصة. للاستفسار: aroumaEd@gmail.com",
+    questions: [{ id: "notes", title: "هل لديك أي ملاحظات إضافية أو معلومات تود مشاركتها؟", type: "text" }],
+  },
 ];
 
 /* ================== دوال مساعدة ================== */
 function isValidEmail(v: string) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()); }
 function isValidPhone(v: string) { const digits = v.replace(/[^\d]/g, ""); return digits.length >= 8; }
+function likertToNum(v: string): number {
+  const i = LIKERT_5.indexOf((v || "").trim());
+  return i >= 0 ? i : 0; // 0..4
+}
+function likertToScore(v: string): number {
+  // يحول 0..4 إلى -2..+2
+  return likertToNum(v) - 2;
+}
 
-/* ======== MI (الذكاءات المتعددة) ======== */
-const MI_CATEGORY_MAP: Record<string, string> = {
-  mi_1: "logical", mi_2: "logical",
-  mi_3: "spatial", mi_4: "musical", mi_5: "spatial",
-  mi_6: "interpersonal", mi_7: "intrapersonal", mi_8: "intrapersonal",
-  mi_9: "bodily", mi_10: "naturalist", mi_11: "interpersonal", mi_12: "linguistic",
-};
-const MI_SCORE_MAP: Record<string, number> = { "دائماً": 4, "أحياناً": 3, "نادراً": 2, "أبداً": 1 };
-const MI_MAX_ITEMS: Record<string, number> = {
-  logical: 2, spatial: 2, musical: 1, bodily: 1, interpersonal: 2, intrapersonal: 2, naturalist: 1, linguistic: 1,
+/* ======== MI (الذكاءات المتعددة) — وفق القسم الجديد (interests) ======== */
+const MI_FROM_INTERESTS: Record<string, "musical" | "bodily" | "logical" | "naturalist" | "spatial" | "linguistic" | "interpersonal" | "intrapersonal"> = {
+  i_music: "musical",
+  i_physical: "bodily",
+  i_puzzles: "logical",
+  i_nature: "naturalist",
+  i_art: "spatial",
+  i_storytelling: "linguistic",
+  i_team: "interpersonal",
+  i_introspective: "intrapersonal",
 };
 
 function computeMiScores(ans: Record<string, any>) {
   const totals: Record<string, number> = {};
   const counts: Record<string, number> = {};
-
-  Object.entries(ans).forEach(([qid, val]) => {
-    if (!qid.startsWith("mi_")) return;
-    const cat = MI_CATEGORY_MAP[qid];
-    if (!cat) return;
-    const score = MI_SCORE_MAP[(val ?? "") as string] ?? 0;
+  Object.entries(MI_FROM_INTERESTS).forEach(([qid, cat]) => {
+    const v = String(ans[qid] || "");
+    const score = likertToNum(v) + 1; // 1..5
     totals[cat] = (totals[cat] || 0) + score;
     counts[cat] = (counts[cat] || 0) + 1;
   });
 
   const result: Record<string, { sum: number; max: number; percent: number }> = {};
-  Object.keys(MI_MAX_ITEMS).forEach((cat) => {
+  Object.keys(MI_FROM_INTERESTS).reduce((set, q) => (set.add(MI_FROM_INTERESTS[q]), set), new Set<string>()).forEach((cat) => {
     const sum = totals[cat] || 0;
-    const max = (counts[cat] || 0) * 4 || (MI_MAX_ITEMS[cat] * 4);
+    const max = (counts[cat] || 0) * 5;
     const percent = max ? Math.round((sum / max) * 100) : 0;
     result[cat] = { sum, max, percent };
   });
 
-  const ranking = Object.entries(result).sort((a, b) => b[1].percent - a[1].percent || b[1].sum - a[1].sum).map(([cat]) => cat);
+  const ranking = Object.entries(result)
+    .sort((a, b) => b[1].percent - a[1].percent || b[1].sum - a[1].sum)
+    .map(([k]) => k);
+
   return { result, ranking };
 }
 
-/* ======== VAK ======== */
+/* ======== VAK (من عناصر القسم الرابع) ======== */
 function computeVAK(ans: Record<string, any>) {
-  const selected = new Set<string>(Array.isArray(ans.senses) ? ans.senses : []);
-  const vak = {
-    visual: Number(selected.has("النظر")) + Number(selected.has("الكتابة أو الرسم")),
-    auditory: Number(selected.has("السمع")) + Number(selected.has("التكرار اللفظي")),
-    kinesthetic: Number(selected.has("الحركة واللمس")),
-  };
-  const best = String(ans.best_explain || "");
-  if (best.includes("صور") || best.includes("رسومات")) vak.visual += 1;
-  if (best.includes("الشرح بالكلام") || best.includes("القصة")) vak.auditory += 1;
-  if (best.includes("يجرب")) vak.kinesthetic += 1;
+  // جمع نقاط من 0..4 لكل بند، نجعل بعض البنود ذات دلالة مزدوجة
+  const visualIds = ["l_visual_1", "l_visual_2", "l_visual_3", "l_imagery_1"];
+  const auditoryIds = ["l_auditory_1", "l_auditory_2"];
+  const kinestheticIds = ["l_kinesthetic_1", "l_kinesthetic_2", "l_hands_on_1", "l_modeling_1"];
+  // بنود داعمة
+  const dualVisual = ["l_media_1", "l_dual_1"];
+  const dualAuditory = ["l_media_1", "l_dual_1"];
 
-  const max = Math.max(vak.visual, vak.auditory, vak.kinesthetic, 1);
+  const sum = (ids: string[]) => ids.reduce((s, id) => s + likertToNum(String(ans[id] || "")), 0);
+
+  let visual = sum(visualIds) + 0.5 * sum(dualVisual);
+  let auditory = sum(auditoryIds) + 0.5 * sum(dualAuditory);
+  let kinesthetic = sum(kinestheticIds);
+
+  // نسب مئوية على أساس أعلى نمط (تطبيع نسبي)
+  const max = Math.max(visual, auditory, kinesthetic, 1);
   const percent = {
-    visual: Math.round((vak.visual / max) * 100),
-    auditory: Math.round((vak.auditory / max) * 100),
-    kinesthetic: Math.round((vak.kinesthetic / max) * 100),
+    visual: Math.round((visual / max) * 100),
+    auditory: Math.round((auditory / max) * 100),
+    kinesthetic: Math.round((kinesthetic / max) * 100),
   };
   const ranking = (Object.keys(percent) as Array<keyof typeof percent>).sort((a, b) => percent[b] - percent[a]);
-  return { raw: vak, percent, ranking };
+  return { raw: { visual, auditory, kinesthetic }, percent, ranking };
 }
 
-/* ======== Big Five (تقريبي لـ MVP) ======== */
+/* ======== Big Five (باستخدام بنود القسم الثاني الجديدة) ======== */
 function computeBigFive(ans: Record<string, any>) {
   let E = 0, O = 0, A = 0, C = 0, N = 0, cntE = 0, cntO = 0, cntA = 0, cntC = 0, cntN = 0;
 
-  if (ans.overall_trait) {
-    const m: Record<string, Partial<Record<'E'|'O'|'A'|'C'|'N', number>>> = {
-      "اجتماعي ويحب التفاعل": { E: 2 },
-      "خجول ويتردد في التفاعل": { E: -2 },
-      "قيادي ومبادر": { E: 1, C: 1 },
-      "متعاون ويحب العمل الجماعي": { A: 2 },
-      "مستقل ويفضل إنجاز المهام بنفسه": { C: 1, O: 1 },
-      "حساس وعاطفي": { N: 1, A: 1 },
-      "هادئ ومتحفظ": { E: -1 },
-    };
-    const w = m[String(ans.overall_trait)];
-    if (w) { E += w.E || 0; O += w.O || 0; A += w.A || 0; C += w.C || 0; cntE++; cntO++; cntA++; cntC++; }
+  // خريطة البنود -> البعد (+ تعني يزيد البعد مع الارتفاع في الليكرت، - تعني عكسي)
+  const map: Array<[string, "E" | "O" | "A" | "C" | "N", 1 | -1]> = [
+    ["p_extraversion_1", "E", 1],
+    ["p_introversion_1", "E", -1],
+    ["p_agreeableness_1", "A", 1],
+    ["p_assertiveness_1", "E", 1], // تأكيد الذات نقرّبه للانبساط
+    ["p_cautious_1", "N", 1],      // حذر/تردد قرب العصابية
+    ["p_calm_1", "N", -1],
+    ["p_expressive_1", "E", 1],
+    ["p_boredom_1", "N", 1],
+    ["p_detail_1", "C", 1],
+    ["p_order_1", "C", 1],
+  ];
+
+  for (const [qid, dim, sign] of map) {
+    const s = likertToScore(String(ans[qid] || "")); // -2..+2
+    if (dim === "E") { E += sign * s; cntE++; }
+    if (dim === "O") { O += sign * s; cntO++; }
+    if (dim === "A") { A += sign * s; cntA++; }
+    if (dim === "C") { C += sign * s; cntC++; }
+    if (dim === "N") { N += sign * s; cntN++; }
   }
 
-  if (ans.change_response) {
-    const m = {
-      "يتأقلم بسرعة دون قلق": { N: -2, C: 1 },
-      "يحتاج إلى بعض الوقت للتأقلم": { N: -1 },
-      "يظهر ترددًا أو قلقًا واضحًا": { N: 1 },
-      "يرفض التغيير أو ينسحب تمامًا": { N: 2, C: -1 },
-    } as any;
-    const w = m[String(ans.change_response)];
-    if (w) { N += w.N || 0; C += w.C || 0; cntN++; cntC++; }
-  }
-
-  if (ans.emotion_expression) {
-    const m = {
-      "نعم، يعبر عنها بوضوح وبكثرة": { N: 1, A: 1 },
-      "أحيانًا، في مواقف محددة فقط": { N: 0 },
-      "لا، يميل إلى كتمان مشاعره": { N: -1 },
-    } as any;
-    const w = m[String(ans.emotion_expression)];
-    if (w) { N += w.N || 0; A += w.A || 0; cntN++; cntA++; }
-  }
-
-  if (ans.free_time) {
-    const m = {
-      "أنشطة هادئة (رسم، قراءة، تركيب مكعبات)": { O: 1 },
-      "أنشطة حركية (ركض، قفز، ألعاب جسدية)": { E: 1 },
-      "أنشطة اجتماعية (اللعب مع أطفال آخرين)": { E: 2 },
-      "أنشطة فردية (اللعب وحده، تأمل، خيال)": { O: 1, E: -1 },
-    } as any;
-    const w = m[String(ans.free_time)];
-    if (w) { O += w.O || 0; E += w.E || 0; cntO++; cntE++; }
-  }
-
-  if (ans.mood_stability) {
-    const m = { "ثابت ومزاجه متوازن": -2, "يتقلب قليلًا حسب الموقف": -1, "سريع الانفعال ويصعب التنبؤ بمزاجه": 2 } as any;
-    N += m[String(ans.mood_stability)] ?? 0; cntN++;
-  }
-
-  if (ans.rules) {
-    const m = { "يلتزم بها": 2, "يحتاج تذكيرًا أحيانًا": 0, "غالبًا يخالف القواعد": -2 } as any;
-    C += m[String(ans.rules)] ?? 0; cntC++;
-  }
-
-  if (ans.empathy_behavior) {
-    const m = {
-      "يساعد أو يواسيه": 2,
-      "يتحدث ويسأل ما الأمر": 1,
-      "يُظهر اهتمامًا دون تدخل": 0,
-      "لا يلاحظ": -1,
-      "يبتعد": -2,
-      "يتأثر نفسيًا": 1,
-    } as any;
-    A += m[String(ans.empathy_behavior)] ?? 0; cntA++;
-  }
-  if (ans.empathy_level) {
-    const m = {
-      "يلاحظ ويتفاعل بسهولة": 2,
-      "يتعاطف مع القريبين فقط": 0,
-      "لا يهتم كثيرًا": -1,
-      "أحيانًا حسب حالته النفسية": 0,
-      "يسخر/يستهين بمشاعر غيره": -2,
-      "يحتاج تذكيرًا للتفهم": -1,
-    } as any;
-    A += m[String(ans.empathy_level)] ?? 0; cntA++;
-  }
-
-  function norm(v: number, cnt: number) {
+  const norm = (v: number, cnt: number) => {
     if (!cnt) return 50;
     const min = -2 * cnt, max = 2 * cnt;
-    const p = (v - min) / (max - min);
-    return Math.round(p * 100);
-  }
+    return Math.round(((v - min) / (max - min)) * 100);
+    };
   const percent = { E: norm(E, cntE), O: norm(O, cntO), A: norm(A, cntA), C: norm(C, cntC), N: norm(N, cntN) };
   return { raw: { E, O, A, C, N }, percent, counts: { cntE, cntO, cntA, cntC, cntN } };
 }
 
-/* ======== بيئة Bronfenbrenner (تلخيص مؤشرات) ======== */
+/* ======== بيئة Bronfenbrenner (تلخيص مؤشرات من القسم السادس) ======== */
 function computeEnvironment(ans: Record<string, any>) {
-  const relation = String(ans.relationship_quality || "");
-  const daily = String(ans.daily_time || "");
-  const parenting = String(ans.parenting_style || "");
-  const decisions = String(ans.decisions || "");
-  let support = 0;
-
-  if (relation.includes("قوية")) support += 2;
-  else if (relation.includes("جيدة")) support += 1;
-
-  if (daily.includes("يوميًا")) support += 2;
-  else if (daily.includes("نعم ولكن")) support += 1;
-
-  if (parenting.includes("حازم") || parenting.includes("متوازن")) support += 2;
-
-  if (decisions.includes("كلا الوالدين")) support += 1;
-
-  const percent = Math.round((support / 7) * 100);
+  const ids = [
+    "f_talk_time",
+    "f_parent_participation",
+    "f_autonomy",
+    "f_praise",
+    "f_opinion",
+    "f_guidance_over_punish",
+    "f_routine",
+    "f_disclosure",
+  ];
+  const scores = ids.map((id) => likertToNum(String(ans[id] || ""))); // 0..4
+  const sum = scores.reduce((a, b) => a + b, 0);
+  const max = ids.length * 4;
+  const percent = Math.round((sum / max) * 100);
   let level = "متوسط";
   if (percent >= 70) level = "عالي";
   else if (percent <= 35) level = "منخفض";
-
-  return { supportScore: support, supportPercent: percent, level };
+  return { supportScore: sum, supportPercent: percent, level };
 }
 
 /* ======== توليد توصيات نصية مختصرة ======== */
@@ -556,7 +399,7 @@ function generateRecommendations(
 
   if (vakTop === "visual") lines.push("استخدم صورًا وبطاقات وخططًا/خرائط ذهنية وألوانًا كودية.");
   if (vakTop === "auditory") lines.push("اعتمد السرد الشفهي والمناقشة القصيرة والتكرار اللفظي.");
-  if (vakTop === "kinesthetic") lines.push("ادمج التجريب باليد ومختبر منزلي وألعاب تركيب.");
+  if (vakTop === "kinesthetic") lines.push("ادمج التجريب باليد ومختبرًا منزليًا وألعاب تركيب.");
 
   if (big5.percent.N >= 65) lines.push("خفّض مفاجآت الروتين وهيّئ انتقالات سلسة بين الأنشطة.");
   if (big5.percent.C >= 65) lines.push("قسّم المهام لقوائم صغيرة مع متابعة ذاتية وملصقات إنجاز.");
@@ -653,7 +496,7 @@ export default function AssessmentPage() {
     setErrorMsg(null);
 
     try {
-      // 1) حساب كل التحليلات
+      // 1) حساب كل التحليلات (اعتمادًا على المعرفات الجديدة)
       const { result: miRes, ranking: miRanking } = computeMiScores(answers);
       const vak = computeVAK(answers);
       const big5 = computeBigFive(answers);
@@ -715,21 +558,15 @@ export default function AssessmentPage() {
         throw new Error(data?.message || "تعذر الإرسال، حاول لاحقًا.");
       }
 
-      // خزّن آخر نتيجة محليًا لصفحة النتائج (اختياري لاستخدام لاحق)
+      // خزّن آخر نتيجة محليًا لصفحة النتائج (اختياري)
       try {
         localStorage.setItem(
           "arouma_last_results",
-          JSON.stringify({
-      mi: { result: miRes, ranking: miRanking },
-      vak,
-      big5,
-      environment: env,
-      recs,
-    })
-  );
-} catch (err) {
-  console.error("تعذر حفظ النتائج محليًا:", err);
-}
+          JSON.stringify({ mi: { result: miRes, ranking: miRanking }, vak, big5, environment: env, recs })
+        );
+      } catch (err) {
+        console.error("تعذر حفظ النتائج محليًا:", err);
+      }
 
       localStorage.removeItem("arouma_answers");
       window.location.href = "/thank-you"; // بدّل إلى /assessment/results إذا جهزت صفحة النتائج
@@ -743,19 +580,15 @@ export default function AssessmentPage() {
   /* ================== الواجهة ================== */
   return (
     <main dir="rtl" className="min-h-screen text-[var(--flw-text)] p-6 md:p-12">
-      <div className="max-w-4xl mx-auto"> 
-      
-      
-  
-
+      <div className="max-w-4xl mx-auto">
         {/* العنوان + شريط التقدم */}
         <div className="flw-card p-5 md:p-6 mb-6">
           {/* شعار أرومة */}
           <div className="flex justify-center items-center">
             <img
-            src="/logo.png"
-            alt="شعار أرومة"
-            className="h-24 md:h-28 w-auto object-contain drop-shadow-md"
+              src="/logo.png"
+              alt="شعار أرومة"
+              className="h-24 md:h-28 w-auto object-contain drop-shadow-md"
             />
           </div>
           {/* العنوان (مخفي للمظهر، مفيد للوصولية/SEO) */}

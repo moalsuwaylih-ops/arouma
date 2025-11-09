@@ -1,11 +1,24 @@
 "use client";
 
-import { useState } from "react";
-import AssessmentPage from "./arouma-form";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
+import AssessmentPage, { formSections } from "./arouma-form";
 
 export default function Page() {
   const [started, setStarted] = useState(false);
+  const startBtnRef = useRef<HTMLButtonElement | null>(null);
+
+  // حساب الأرقام ديناميكيًا من نموذج الأسئلة
+  const { visibleSections, totalQuestions, estMinutes } = useMemo(() => {
+    const sectionsWithQs = formSections.filter((s) => (s.questions?.length ?? 0) > 0);
+    const qs = sectionsWithQs.reduce((sum, s) => sum + (s.questions?.length ?? 0), 0);
+    const est = Math.min(18, Math.max(10, Math.round(qs * 0.2))); // تقدير سريع
+    return { visibleSections: sectionsWithQs.length, totalQuestions: qs, estMinutes: est };
+  }, []);
+
+  useEffect(() => {
+    if (started) window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [started]);
 
   if (started) return <AssessmentPage />;
 
@@ -30,44 +43,95 @@ export default function Page() {
         {/* العنوان الرئيسي */}
         <h1 className="mt-6 text-3xl md:text-4xl font-extrabold text-center leading-relaxed">
           <span className="bg-gradient-to-r from-[#6D28D9] to-[#10B981] bg-clip-text text-transparent">
-          </span>{" "}
+            اختبار أرومة لتحليل شخصية وذكاءات طفلك
+          </span>
         </h1>
 
         {/* فقرة تمهيدية عامة لوليّ الأمر */}
         <p className="mt-5 text-lg md:text-xl text-center text-[#4b4863] leading-8">
-           <strong></strong> نقدم لك <strong>تحليلًا علميًا دقيقًا</strong> لشخصية طفلك 
-          وميوله ونقاط قوّته، ثم نترجم ذلك إلى <strong> خطة تربوية </strong> 
-          وأنشطة منزلية ممتعة تدعم  <strong> نموّه بثقة وطمأنينة</strong>.  
-          <br /><br />
-          يقيس <strong>اختبار أرومة</strong> الجوانب <strong>الشخصية</strong>، 
-          و<strong>الذكاءات المتعددة</strong>، 
-          و<strong>الأساليب السلوكية والتعليمية</strong> لطفلك، 
-          عبر منهجية تربوية <strong>مبنية على نظريات علمية راسخة</strong> مثل:  
-          <strong> نظرية العوامل الخمسة الكبرى (Big Five)</strong>،  
-          و<strong> نظرية الذكاءات المتعددة (Multiple Intelligences)</strong>،  
-          و<strong> أنماط التعلّم (VAK)</strong>،  
-          و<strong> النظرية البيئية لبروفنبرنر (Bronfenbrenner’s Ecological Theory)</strong>.  
-          <br /><br />
-          هدفنا في <strong>أرومة</strong> هو أن نساعدك على <strong>فهم طفلك بعمق</strong>، 
-          وتوجيهه نحو بيئة تعليمية وحياتية <strong>تحتضن قدراته وتُبرز تفرّده</strong>.
+          نقدم لك <strong>تحليلًا علميًا دقيقًا</strong> لشخصية طفلك وميوله ونقاط قوته.
+          <br />
+          يقيس <strong>اختبار أرومة</strong> الجوانب <strong>الشخصية</strong>،
+          و<strong>الذكاءات المتعددة</strong>، و<strong>أنماط التعلّم</strong>،
+          و<strong>التفاعل الاجتماعي والانفعالي</strong>، و<strong>الدافعية</strong>،
+          و<strong>الدعم الأسري البيئي</strong> مستندًا إلى مجموعة من النظريات التربوية والنفسية المعتمدة.
         </p>
 
-        {/* نقاط القيمة السريعة */}
+        {/* الإطار العلمي المستخدم (كل النظريات) */}
+        <div className="mt-8 bg-[#faf9ff] rounded-2xl p-6 border border-[#efeafd]">
+          <h2 className="text-xl font-semibold text-[#3c2e7e] mb-3">الإطار العلمي المستخدم</h2>
+          <p className="text-[#4b4863] leading-7">
+            يعتمد الاختبار على المراجع والنماذج التالية:
+          </p>
+          <ul className="list-disc pr-6 space-y-2 text-[#4b4863] leading-7 mt-3">
+            <li>
+              <strong>سمات الشخصية العامة:</strong> المزاج (Temperament) &amp;{" "}
+              العوامل الخمسة الكبرى <em>(Big Five)</em>.
+            </li>
+            <li>
+              <strong>التفاعل الاجتماعي والانفعالي:</strong> نظرية النمو النفسي-الاجتماعي لإريكسون{" "}
+              <em>(Erikson)</em>، النظرية الاجتماعية-الثقافية لفيجوتسكي <em>(Vygotsky)</em>، والذكاء العاطفي
+              لقولمان <em>(Goleman)</em>.
+            </li>
+            <li>
+              <strong>أنماط التعلّم:</strong> نموذج <em>VAK</em> (بصري/سمعي/حركي) ونموذج كولب{" "}
+              <em>(Kolb’s Experiential Learning)</em>.
+            </li>
+            <li>
+              <strong>الدافعية:</strong> هرم ماسلو للحاجات <em>(Maslow)</em> ونظرية تحديد الذات{" "}
+              <em>(Self-Determination Theory: Deci &amp; Ryan)</em>.
+            </li>
+            <li>
+              <strong>الذكاءات والميول:</strong> نظرية الذكاءات المتعددة لــغاردنر{" "}
+              <em>(Gardner’s Multiple Intelligences)</em>.
+            </li>
+            <li>
+              <strong>البيئة والأسرة:</strong> نظرية الأنظمة البيئية لبروفنبرنر{" "}
+              <em>(Bronfenbrenner’s Ecological Systems Theory)</em>.
+            </li>
+          </ul>
+
+          {/* شارات صغيرة للأسماء (للمظهر فقط) */}
+          <div className="mt-4 flex flex-wrap gap-2">
+            {[
+              "Big Five",
+              "Temperament",
+              "Erikson",
+              "Vygotsky",
+              "Goleman (EI)",
+              "VAK",
+              "Kolb",
+              "Maslow",
+              "Self-Determination",
+              "Gardner (MI)",
+              "Bronfenbrenner",
+            ].map((tag) => (
+              <span
+                key={tag}
+                className="inline-block text-xs rounded-full border border-[#efeafd] bg-[#fbfaff] px-3 py-1 text-[#3c2e7e]"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* نقاط القيمة السريعة (أرقام ديناميكية) */}
         <div className="mt-8 grid md:grid-cols-3 gap-4">
           <div className="rounded-2xl border border-[#efeafd] bg-[#faf9ff] p-5">
             <p className="text-2xl">🗂️</p>
-            <p className="mt-2 font-semibold text-[#3c2e7e]">8 أقسام خفيفة</p>
-            <p className="text-[#6b64a3] text-sm mt-1">تصنع صورة شاملة بلا إرهاق.</p>
+            <p className="mt-2 font-semibold text-[#3c2e7e]">9 أقسام تربوية</p>
+            <p className="text-[#6b64a3] text-sm mt-1">تغطي الجوانب النفسية والسلوكية والتعليمية.</p>
           </div>
           <div className="rounded-2xl border border-[#e2f6ee] bg-[#f3fffb] p-5">
             <p className="text-2xl">✅</p>
-            <p className="mt-2 font-semibold text-[#2f6e5d]">48 سؤالًا علمياً</p>
-            <p className="text-[#5b5672] text-sm mt-1">أسئلة مبنية على خبرات تربوية.</p>
+            <p className="mt-2 font-semibold text-[#2f6e5d]">53 سؤالًا علميًا</p>
+            <p className="text-[#5b5672] text-sm mt-1">أسئلة مبنية على أدوات قياس حديثة وواضحة.</p>
           </div>
           <div className="rounded-2xl border border-[#fff1d7] bg-[#fff9eb] p-5">
             <p className="text-2xl">⏰</p>
             <p className="mt-2 font-semibold text-[#7a5a1e]">10–15 دقيقة فقط</p>
-            <p className="text-[#5b5672] text-sm mt-1">تبدأ الآن… وتحصُل على فائدة طويلة الأثر.</p>
+            <p className="text-[#5b5672] text-sm mt-1">تجربة خفيفة بعمق علمي وأثر طويل المدى.</p>
           </div>
         </div>
 
@@ -95,16 +159,18 @@ export default function Page() {
 
         {/* رسالة اطمئنان وختام */}
         <p className="mt-6 text-center text-[#4b4863] font-medium">
-           شكرًا لثقتك بأرومة… سنكون معك خطوة بخطوة لاكتشاف ما يميّز طفلك وتنميته بحب ووعي  
+          شكرًا لثقتك بأرومة… سنكون معك خطوة بخطوة لاكتشاف ما يميّز طفلك وتنميته بحب ووعي
         </p>
 
         {/* زر البدء */}
         <div className="flex flex-col items-center gap-2 mt-8">
           <button
+            ref={startBtnRef}
             onClick={() => setStarted(true)}
-            className="px-8 py-3 rounded-xl text-white font-semibold bg-gradient-to-r from-[#10B981] to-[#6D28D9] hover:opacity-95 shadow-md transition"
+            className="px-8 py-3 rounded-xl text-white font-semibold bg-gradient-to-r from-[#10B981] to-[#6D28D9] hover:opacity-95 shadow-md transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#6D28D9]"
+            aria-label="ابدأ اختبار أرومة الآن"
           >
-            ابدأ 
+            ابدأ
           </button>
           <span className="text-xs text-gray-500">
             بالضغط على البدء أنت توافق على سياسات الخصوصية واستخدام البيانات لأغراض التقييم.

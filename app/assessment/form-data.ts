@@ -18,12 +18,14 @@ export interface Section {
   questions: Question[];
 }
 
+const LIKERT_5 = ["أبدًا", "نادرًا", "أحيانًا", "غالبًا", "دائمًا"];
+
 export const formSections: Section[] = [
   {
     id: "intro",
-    title: " (اختبار أرومة)",
+    title: "تقييم شخصية وذكاءات الطفل (نموذج أرومة)",
     description:
-      "🟣 أهلاً بكم في منصة أرومة.\nعدد الأقسام: 8 — عدد الأسئلة: 48 — الوقت: 10–15 دقيقة.\nأجب بصدق؛ البيانات سرية وتُستخدم للتقييم فقط.",
+      "🟣 أهلاً بكم في منصة أرومة.\n🗂️ عدد الأقسام: 9 — ⏰ الوقت: 10–15 دقيقة.\n✅ أجب بصدق؛ البيانات سرية وتُستخدم للتقييم فقط. يمكنك إيقاف التعبئة والعودة لاحقًا.",
     questions: [
       {
         id: "respondent_role",
@@ -52,6 +54,13 @@ export const formSections: Section[] = [
     title: "القسم الأول: بيانات أساسية عن الطفل",
     questions: [
       {
+        id: "gender",
+        title: "الجنس",
+        type: "single",
+        required: true,
+        options: ["ذكر", "أنثى"],
+      },
+      {
         id: "age",
         title: "عمر الطفل",
         type: "single",
@@ -59,11 +68,11 @@ export const formSections: Section[] = [
         options: ["أقل من 4 سنوات", "4–6 سنوات", "7–9 سنوات", "10–13 سنة"],
       },
       {
-        id: "gender",
-        title: "الجنس",
+        id: "birth_order",
+        title: "ترتيب الطفل بين إخوته",
         type: "single",
         required: true,
-        options: ["ذكر", "أنثى"],
+        options: ["الأول", "الأوسط", "الأصغر", "وحيد"],
       },
       {
         id: "grade",
@@ -82,9 +91,16 @@ export const formSections: Section[] = [
         ],
       },
       {
-        id: "diagnosis",
+        id: "diagnosis_flag",
         title:
-          "هل لدى الطفل أي احتياجات خاصة أو تشخيصات تعليمية أو سلوكية؟ (اكتبها إن وجدت)",
+          "هل لدى الطفل أي احتياجات خاصة أو تشخيصات تعليمية/سلوكية؟",
+        type: "single",
+        required: true,
+        options: ["لا", "نعم"],
+      },
+      {
+        id: "diagnosis_details",
+        title: "اذكر أي تشخيص طبي/تربوي (مثل فرط الحركة، صعوبات تعلم، توحد، تأخر الكلام...)",
         type: "text",
         required: false,
       },
@@ -93,412 +109,128 @@ export const formSections: Section[] = [
         title: "هل يتناول الطفل أي علاج نفسي أو دوائي حالياً؟",
         type: "single",
         required: true,
-        options: ["نعم", "لا"],
+        options: ["لا", "نعم"],
+      },
+      {
+        id: "therapy_details",
+        title: "إذا كانت الإجابة نعم، اذكر نوع العلاج/الدواء",
+        type: "text",
+        required: false,
       },
     ],
   },
 
-  // القسم 2: وصف شخصية الطفل العامة
+  // القسم 2: وصف شخصية الطفل العامة (Big Five / Temperament)
   {
     id: "personality",
     title: "القسم الثاني: وصف شخصية الطفل العامة",
+    description:
+      "يركز هذا القسم على السمات العامة مثل الانفتاح، الانضباط الذاتي، الانبساط، والمرونة الانفعالية.",
     questions: [
-      {
-        id: "overall_trait",
-        title: "كيف تصف شخصية طفلك بشكل عام؟ (الصفة الأقرب)",
-        type: "single",
-        required: true,
-        options: [
-          "هادئ ومتحفظ",
-          "اجتماعي ويحب التفاعل",
-          "خجول ويتردد في التفاعل",
-          "حساس وعاطفي",
-          "قيادي ومبادر",
-          "متعاون ويحب العمل الجماعي",
-          "مستقل ويفضل إنجاز المهام بنفسه",
-        ],
-      },
-      {
-        id: "change_response",
-        title: "كيف يستجيب طفلك للمواقف الجديدة أو التغيرات المفاجئة؟",
-        type: "single",
-        required: true,
-        options: [
-          "يتأقلم بسرعة دون قلق",
-          "يحتاج إلى بعض الوقت للتأقلم",
-          "يظهر ترددًا أو قلقًا واضحًا",
-          "يرفض التغيير أو ينسحب تمامًا",
-        ],
-      },
-      {
-        id: "emotion_expression",
-        title: "هل يميل طفلك إلى إظهار عواطفه؟",
-        type: "single",
-        required: true,
-        options: [
-          "نعم، يعبر عنها بوضوح وبكثرة",
-          "أحيانًا، في مواقف محددة فقط",
-          "لا، يميل إلى كتمان مشاعره",
-        ],
-      },
-      {
-        id: "free_time",
-        title: "عند وجود وقت فراغ، ما نوع الأنشطة التي يفضلها طفلك غالبًا؟",
-        type: "single",
-        required: true,
-        options: [
-          "أنشطة هادئة (رسم، قراءة، تركيب مكعبات)",
-          "أنشطة حركية (ركض، قفز، ألعاب جسدية)",
-          "أنشطة اجتماعية (اللعب مع أطفال آخرين)",
-          "أنشطة فردية (اللعب وحده، تأمل، خيال)",
-        ],
-      },
-      {
-        id: "mood_stability",
-        title: "ما مدى ثبات مزاج طفلك خلال اليوم؟",
-        type: "single",
-        required: true,
-        options: [
-          "ثابت ومزاجه متوازن",
-          "يتقلب قليلًا حسب الموقف",
-          "سريع الانفعال ويصعب التنبؤ بمزاجه",
-        ],
-      },
-      {
-        id: "fears",
-        title: "هل لدى الطفل أي من هذه المخاوف؟ (اختر ما ينطبق)",
-        type: "multi",
-        options: [
-          "الخوف من الظلام",
-          "الأصوات المرتفعة",
-          "الحيوانات",
-          "الأشخاص الغرباء أو الأماكن الجديدة",
-          "القلق عند الانفصال عن الأهل",
-          "حساسية من روائح/أقمشة/لمس",
-          "لا توجد مخاوف واضحة",
-        ],
-      },
+      { id: "p_extraversion_1", title: "يتفاعل الطفل بسهولة مع الآخرين ويحب التعارف", type: "single", required: true, options: LIKERT_5 },
+      { id: "p_introversion_1", title: "يفضل اللعب أو العمل بمفرده", type: "single", required: true, options: LIKERT_5 },
+      { id: "p_agreeableness_1", title: "يتقبل التوجيه والنصائح بسهولة", type: "single", required: true, options: LIKERT_5 },
+      { id: "p_assertiveness_1", title: "يصرّ على آرائه حتى لو خالفه الآخرون", type: "single", required: true, options: LIKERT_5 },
+      { id: "p_cautious_1", title: "يتعامل مع المواقف الجديدة بحذر أو تردد", type: "single", required: true, options: LIKERT_5 },
+      { id: "p_calm_1", title: "يظهر عليه الهدوء أغلب الوقت", type: "single", required: true, options: LIKERT_5 },
+      { id: "p_expressive_1", title: "يتحدث كثيرًا ويعبّر عن مشاعره بسهولة", type: "single", required: true, options: LIKERT_5 },
+      { id: "p_boredom_1", title: "يشعر بسرعة بالملل إذا لم يكن هناك نشاط ممتع", type: "single", required: true, options: LIKERT_5 },
+      { id: "p_detail_1", title: "يلاحظ التفاصيل الصغيرة في الأشياء من حوله", type: "single", required: true, options: LIKERT_5 },
+      { id: "p_order_1", title: "يحب ترتيب أغراضه والمحافظة على النظام", type: "single", required: true, options: LIKERT_5 },
     ],
   },
 
-  // القسم 3: السلوك والتفاعل الاجتماعي
+  // القسم 3: السلوك والتفاعل الاجتماعي (Social & Emotional)
   {
     id: "social",
     title: "القسم الثالث: السلوك والتفاعل الاجتماعي",
+    description:
+      "يهدف هذا القسم إلى فهم التفاعل مع الآخرين، التعبير الانفعالي، والتعاطف (إريكسون، فيجوتسكي، قولمان).",
     questions: [
-      {
-        id: "initiate_interaction",
-        title: "في المدرسة أو المناسبات، كيف يبادر طفلك بالتفاعل؟",
-        type: "single",
-        required: true,
-        options: [
-          "يبدأ بالتحدث واللعب مع الآخرين دون تردد",
-          "يراقب أولاً ثم ينضم تدريجيًا",
-          "ينتظر أن يدعوه الآخرون للمشاركة",
-          "يفضل الانسحاب والبقاء وحده",
-        ],
-      },
-      {
-        id: "rules",
-        title:
-          "كيف يتعامل طفلك مع القواعد والتعليمات الاجتماعية (الدور، الاستئذان...)",
-        type: "single",
-        required: true,
-        options: ["يلتزم بها", "يحتاج تذكيرًا أحيانًا", "غالبًا يخالف القواعد"],
-      },
-      {
-        id: "strangers",
-        title: "كيف يتعامل طفلك مع الأشخاص الجدد؟",
-        type: "single",
-        required: true,
-        options: [
-          "يتحدث معهم بسهولة",
-          "يتردد في البداية ثم يعتاد",
-          "يرفض التفاعل ويطلب الانسحاب",
-        ],
-      },
-      {
-        id: "diversity",
-        title: "استجابة الطفل لأطفال من أعمار/خلفيات مختلفة",
-        type: "single",
-        required: true,
-        options: [
-          "يتقبل الجميع ويتفاعل بسهولة",
-          "يفضل من هم في عمره فقط",
-          "يتجنب من يختلفون عنه",
-        ],
-      },
-      {
-        id: "empathy_behavior",
-        title: "تصرفه عند رؤية شخص حزين",
-        type: "single",
-        required: true,
-        options: [
-          "يساعد أو يواسيه",
-          "يتحدث ويسأل ما الأمر",
-          "يُظهر اهتمامًا دون تدخل",
-          "لا يلاحظ",
-          "يبتعد",
-          "يتأثر نفسيًا",
-        ],
-      },
-      {
-        id: "friendships",
-        title: "ما مدى سهولة تكوين علاقات أو صداقات جديدة؟",
-        type: "single",
-        required: true,
-        options: [
-          "يحب التعرف على أصدقاء جدد دائمًا",
-          "يفضل البقاء مع أصدقائه الحاليين",
-          "لا يهتم كثيرًا",
-          "يجد صعوبة في الحفاظ على الأصدقاء",
-        ],
-      },
+      { id: "s_express_words", title: "يعبّر عن مشاعره بالكلمات (مثل: أنا زعلان/فرحان)", type: "single", required: true, options: LIKERT_5 },
+      { id: "s_read_emotions", title: "يفهم مشاعر الآخرين من تعابير وجوههم أو نبراتهم", type: "single", required: true, options: LIKERT_5 },
+      { id: "s_soothe_others", title: "يحاول تهدئة من حوله عندما يراهم حزينين أو غاضبين", type: "single", required: true, options: LIKERT_5 },
+      { id: "s_frustration", title: "يبكي أو يغضب بسهولة عندما يُمنع من شيء يحبه", type: "single", required: true, options: LIKERT_5 },
+      { id: "s_self_control", title: "يستطيع ضبط نفسه عندما يُطلب منه الانتظار", type: "single", required: true, options: LIKERT_5 },
+      { id: "s_cooperate", title: "يتعاون بسهولة مع الأطفال الآخرين أثناء اللعب", type: "single", required: true, options: LIKERT_5 },
+      { id: "s_confidence_public", title: "يُظهر ثقة عند التحدث أمام الآخرين", type: "single", required: true, options: LIKERT_5 },
     ],
   },
 
-  // القسم 4: أنماط التعلم المفضلة (VAK)
+  // القسم 4: أنماط التعلم المفضلة (VAK & Kolb)
   {
     id: "learning_styles",
-    title: "القسم الرابع: أنماط التعلم المفضلة (VAK)",
+    title: "القسم الرابع: أنماط التعلم المفضلة",
+    description:
+      "لتحديد الطريقة التي يتعلم بها الطفل بشكل أفضل (بصري، سمعي، حركي/عملي).",
     questions: [
-      {
-        id: "senses",
-        title:
-          "أي من الحواس يعتمد عليها طفلك أكثر عند التعلم؟ (يمكن اختيار أكثر من خيار)",
-        type: "multi",
-        options: ["النظر", "السمع", "الحركة واللمس", "الكتابة أو الرسم", "التكرار اللفظي"],
-      },
-      {
-        id: "new_skill_approach",
-        title: "عند تعلم مهارة جديدة، كيف يتعامل معها؟",
-        type: "single",
-        required: true,
-        options: ["يريد المشاهدة أولًا", "يجرب مباشرة", "يسأل كثيرًا ويستمع جيدًا", "لا يُظهر رغبة واضحة"],
-      },
-      {
-        id: "content_pref",
-        title: "نوع القصص/البرامج المفضلة",
-        type: "single",
-        required: true,
-        options: ["قصص مصورة/رسوم متحركة", "قصص صوتية", "برامج أنشطة وتجارب", "لا يهتم كثيرًا"],
-      },
-      {
-        id: "hands_on",
-        title: "هل يُظهر اهتمامًا بتجريب الأشياء بيديه؟ (تركيب، لمس المواد، طين/رمل)",
-        type: "single",
-        required: true,
-        options: ["دائمًا", "أحيانًا", "نادرًا", "لا يهتم"],
-      },
-      {
-        id: "best_explain",
-        title: "أفضل أسلوب لشرح شيء للطفل",
-        type: "single",
-        required: true,
-        options: ["صور/رسومات", "الشرح بالكلام/القصة", "أن يجرب بنفسه", "غير واضح بعد"],
-      },
+      { id: "l_visual_1", title: "يلاحظ الصور والرسومات أكثر من الكلمات", type: "single", required: true, options: LIKERT_5 },
+      { id: "l_visual_2", title: "يتذكر شكل الصفحة أو مكان الشيء بسهولة", type: "single", required: true, options: LIKERT_5 },
+      { id: "l_auditory_1", title: "يفهم أكثر عندما يسمع شرحًا صوتيًا", type: "single", required: true, options: LIKERT_5 },
+      { id: "l_auditory_2", title: "يكرر المعلومات بصوت منخفض ليتذكرها", type: "single", required: true, options: LIKERT_5 },
+      { id: "l_kinesthetic_1", title: "يتعلم أفضل عندما يجرب بيديه أو يتحرك أثناء التعلم", type: "single", required: true, options: LIKERT_5 },
+      { id: "l_kinesthetic_2", title: "يجد صعوبة في التركيز إذا جلس دون حركة طويلة", type: "single", required: true, options: LIKERT_5 },
+      { id: "l_visual_3", title: "يحب استخدام الألوان والرسم أثناء الدراسة", type: "single", required: true, options: LIKERT_5 },
+      { id: "l_imagery_1", title: "يتخيل الصور والمشاهد في ذهنه عند التعلم", type: "single", required: true, options: LIKERT_5 },
+      { id: "l_media_1", title: "يفضل القصص أو الفيديوهات أكثر من الشرح النظري", type: "single", required: true, options: LIKERT_5 },
+      { id: "l_hands_on_1", title: "يطلب تجربة الشيء بنفسه لفهمه", type: "single", required: true, options: LIKERT_5 },
+      { id: "l_modeling_1", title: "يتعلم من خلال ملاحظة وتقليد الآخرين", type: "single", required: true, options: LIKERT_5 },
+      { id: "l_dual_1", title: "يفهم أكثر عندما يجمع بين السماع والرؤية معًا", type: "single", required: true, options: LIKERT_5 },
     ],
   },
 
-  // القسم 5: الذكاءات المتعددة (Gardner)
+  // القسم 5: الدافعية والتحفيز (Maslow & SDT)
   {
-    id: "multiple_intelligences",
-    title: "القسم الخامس: تقييم الذكاءات المتعددة",
+    id: "motivation",
+    title: "القسم الخامس: الدافعية والتحفيز",
+    description:
+      "ما الذي يدفع الطفل للتعلم والإنجاز (المكافأة، التحدي، الإنجاز الذاتي).",
     questions: [
-      // من 12 بندًا تكراريًا بنفس المقياس
-      ...[
-        "يحب حل الألغاز أو الألعاب الذهنية والمنطقية",
-        "يطرح الكثير من الأسئلة ويحب الاكتشاف",
-        "يستمتع بالرسم أو التلوين أو الأعمال الفنية",
-        "يتذكر القرآن أو الأغاني أو الأناشيد بسرعة",
-        "يتذكر الأماكن والاتجاهات جيدًا",
-        "يحب العمل مع الآخرين والتعاون",
-        "يفضل اللعب منفردًا ولا يمل من الجلوس لوحده",
-        "يعبر عن مشاعره بسهولة",
-        "يتحرك كثيرًا ويحب الأنشطة البدنية",
-        "يحب الحيوانات أو البيئة أو الطبيعة",
-        "يظهر تعاطفًا مع مشاعر الآخرين",
-        "يحب تأليف القصص أو تمثيلها أو سماعها",
-      ].map((t, i) => ({
-        id: `mi_${i + 1}`,
-        title: t,
-        type: "single" as const,
-        required: true,
-        options: ["دائماً", "أحياناً", "نادراً", "أبداً"],
-      })),
+      { id: "m_reward_1", title: "ينجز المهام عندما يحصل على تشجيع أو جائزة", type: "single", required: true, options: LIKERT_5 },
+      { id: "m_challenge_1", title: "يحب التحدي ويندفع لإثبات قدرته", type: "single", required: true, options: LIKERT_5 },
+      { id: "m_attention_drop", title: "يفقد الحماس بسرعة إذا لم ينتبه أحد لجهده", type: "single", required: true, options: LIKERT_5 },
+      { id: "m_persistence_1", title: "يستمر في المحاولة حتى ينجح دون أن يُطلب منه", type: "single", required: true, options: LIKERT_5 },
+      { id: "m_intrinsic_1", title: "يواصل أداء المهمة حتى دون مكافأة أو مديح", type: "single", required: true, options: LIKERT_5 },
+      { id: "m_pride_1", title: "يشعر بالفخر عند سماع كلمات تشجيعية مثل “أحسنت”", type: "single", required: true, options: LIKERT_5 },
+      { id: "m_relevance_1", title: "يتعلم أكثر عندما يفهم سبب أهمية المهمة", type: "single", required: true, options: LIKERT_5 },
+      { id: "m_feedback_1", title: "يطلب معرفة النتيجة أو تقييم أدائه بعد كل مهمة", type: "single", required: true, options: LIKERT_5 },
+      { id: "m_group_1", title: "يتحمس أكثر عند العمل ضمن مجموعة", type: "single", required: true, options: LIKERT_5 },
     ],
   },
 
-  // القسم 6: التواصل والانفعالات
-  {
-    id: "communication_emotions",
-    title: "القسم السادس: التواصل والانفعالات",
-    questions: [
-      {
-        id: "peer_style",
-        title: "كيف يتفاعل غالبًا مع الأطفال الآخرين؟",
-        type: "single",
-        required: true,
-        options: [
-          "يحب اللعب الجماعي ويشارك",
-          "يفضل اللعب الفردي",
-          "يقود المجموعة وينظم اللعب",
-          "يتبع الآخرين ولا يبادر",
-          "يتعاون عند وجود تعليمات واضحة",
-          "يُظهر عنادًا أحيانًا",
-        ],
-      },
-      {
-        id: "obey_adults",
-        title: "استجابته لأوامر/تعليمات البالغين",
-        type: "single",
-        required: true,
-        options: [
-          "يستجيب مباشرة",
-          "يحتاج تكرار التوجيه",
-          "يُظهر مقاومة أحيانًا",
-          "يتجاهل عمدًا",
-          "حسب مزاجه",
-          "بعد شرح السبب والمنطق",
-        ],
-      },
-      {
-        id: "express_when_upset",
-        title: "عندما يشعر بالحزن/الغضب، كيف يعبّر؟",
-        type: "single",
-        required: true,
-        options: [
-          "بالكلام",
-          "بالبكاء",
-          "بعنف أحيانًا",
-          "بالانسحاب/الصمت",
-          "بالرسم/الكتابة/اللعب",
-          "لا يعبّر بسهولة",
-        ],
-      },
-      {
-        id: "conflict_style",
-        title: "عند خلاف مع طفل آخر، السلوك الغالب؟",
-        type: "single",
-        required: true,
-        options: [
-          "يحاول الحل بالكلام",
-          "يغضب أو ينسحب فورًا",
-          "يشتكي لشخص بالغ",
-          "يدافع جسديًا",
-          "يتجاهل",
-          "يعتمد على الآخر",
-        ],
-      },
-      {
-        id: "empathy_level",
-        title: "ما مدى قدرته على التعاطف؟",
-        type: "single",
-        required: true,
-        options: [
-          "يلاحظ ويتفاعل بسهولة",
-          "يتعاطف مع القريبين فقط",
-          "لا يهتم كثيرًا",
-          "أحيانًا حسب حالته النفسية",
-          "يسخر/يستهين بمشاعر غيره",
-          "يحتاج تذكيرًا للتفهم",
-        ],
-      },
-      {
-        id: "mood_swings",
-        title: "هل يُظهر تقلبات في المزاج؟",
-        type: "single",
-        required: true,
-        options: [
-          "نادرًا، مزاجه مستقر",
-          "انفعالات شديدة أحيانًا",
-          "يتنقل بين مشاعر بسرعة",
-          "استجابات متوازنة",
-          "يتوتر في التغيير/الضغط",
-          "يصعب التنبؤ بردود فعله",
-        ],
-      },
-    ],
-  },
-
-  // القسم 7: البيئة الأسرية والدعم
+  // القسم 6: البيئة والدعم الأسري (Bronfenbrenner)
   {
     id: "family_environment",
-    title: "القسم السابع: البيئة الأسرية والدعم",
+    title: "القسم السادس: البيئة والدعم الأسري",
+    description:
+      "نوع الدعم العاطفي والتربوي داخل الأسرة (نموذج النظم البيئية).",
     questions: [
-      {
-        id: "main_caregiver",
-        title: "من أكثر شخص يقضي معه الطفل معظم الوقت؟",
-        type: "single",
-        required: true,
-        options: ["الأم", "الأب", "الجد/الجدة", "المربية", "الإخوة", "شخص آخر"],
-      },
-      {
-        id: "relationship_quality",
-        title: "كيف تصف علاقتك بالطفل؟",
-        type: "single",
-        required: true,
-        options: [
-          "قوية جدًا ومليئة بالثقة",
-          "جيدة وفيها تواصل",
-          "متوترة أو متقلبة",
-          "محدودة بسبب ظروف",
-          "لا توجد علاقة مباشرة",
-        ],
-      },
-      {
-        id: "daily_time",
-        title: "هل تخصص وقتًا يوميًا للعب/الحديث معه؟",
-        type: "single",
-        required: true,
-        options: [
-          "يوميًا ومنتظم",
-          "نعم ولكن ليس كل يوم",
-          "نادرًا",
-          "لا وقت منتظم",
-          "يعتمد على الفراغ",
-        ],
-      },
-      {
-        id: "decisions",
-        title: "من يتخذ القرارات التربوية؟",
-        type: "single",
-        required: true,
-        options: [
-          "أحد الوالدين",
-          "كلا الوالدين",
-          "الجد/الجدة",
-          "المربية",
-          "لا نمط محدد",
-          "لا قرارات واضحة",
-        ],
-      },
-      {
-        id: "parenting_style",
-        title: "أسلوب التربية الغالب في المنزل",
-        type: "single",
-        required: true,
-        options: [
-          "حازم مع حوار",
-          "صارم يعتمد على العقاب",
-          "متساهل غالبًا بدون حدود",
-          "متوازن ومرن",
-          "غير واضح/غير متماسك",
-        ],
-      },
-      {
-        id: "behavior_handling",
-        title: "عند ظهور مشكلات سلوكية، كيف يتم التعامل؟",
-        type: "single",
-        required: true,
-        options: [
-          "التحدث وشرح الخطأ",
-          "العقاب المباشر",
-          "التجاهل",
-          "التهديد/الصراخ",
-          "اللجوء لجهة أخرى",
-        ],
-      },
+      { id: "f_talk_time", title: "يتم تخصيص وقت يومي للحوار مع الطفل", type: "single", required: true, options: LIKERT_5 },
+      { id: "f_parent_participation", title: "يشارك أحد الوالدين الطفل في أنشطته التعليمية أو الترفيهية", type: "single", required: true, options: LIKERT_5 },
+      { id: "f_autonomy", title: "يتم تشجيع الطفل على اتخاذ قرارات بسيطة بنفسه", type: "single", required: true, options: LIKERT_5 },
+      { id: "f_praise", title: "يحصل على كلمات دعم وثناء من والديه بانتظام", type: "single", required: true, options: LIKERT_5 },
+      { id: "f_opinion", title: "يُسمح له بالتعبير عن رأيه بحرية", type: "single", required: true, options: LIKERT_5 },
+      { id: "f_guidance_over_punish", title: "يتم تصحيح السلوك بالحديث أكثر من العقاب", type: "single", required: true, options: LIKERT_5 },
+      { id: "f_routine", title: "يوجد في المنزل روتين واضح للنوم والدراسة واللعب", type: "single", required: true, options: LIKERT_5 },
+      { id: "f_disclosure", title: "يشعر بالراحة عند التحدث مع والديه عن مشاكله", type: "single", required: true, options: LIKERT_5 },
+    ],
+  },
+
+  // القسم 7: الميول والهوايات العامة (Interests & MI)
+  {
+    id: "interests",
+    title: "القسم السابع: الميول والهوايات العامة",
+    description:
+      "لتحديد الذكاءات الطبيعية والأنشطة التي يستمتع بها الطفل (نظرية الذكاءات المتعددة).",
+    questions: [
+      { id: "i_music", title: "يستمتع بالموسيقى أو الغناء أو تقليد الأصوات", type: "single", required: true, options: LIKERT_5 },
+      { id: "i_physical", title: "ينجذب إلى الأنشطة الحركية (رياضة، بناء، مساعدة في المنزل)", type: "single", required: true, options: LIKERT_5 },
+      { id: "i_puzzles", title: "يحب حل الألغاز أو الأسئلة التي تتطلب تفكيرًا", type: "single", required: true, options: LIKERT_5 },
+      { id: "i_nature", title: "يحب الطبيعة أو الحيوانات ويهتم بمراقبتها", type: "single", required: true, options: LIKERT_5 },
+      { id: "i_art", title: "يحب الرسم أو التلوين أو الأعمال الفنية", type: "single", required: true, options: LIKERT_5 },
+      { id: "i_storytelling", title: "يحب النقاش أو سرد القصص", type: "single", required: true, options: LIKERT_5 },
+      { id: "i_team", title: "يحب الألعاب الجماعية ويتفاعل اجتماعيًا بسهولة", type: "single", required: true, options: LIKERT_5 },
+      { id: "i_introspective", title: "يميل إلى التأمل والهدوء والانعزال أحيانًا", type: "single", required: true, options: LIKERT_5 },
     ],
   },
 
@@ -506,62 +238,56 @@ export const formSections: Section[] = [
   {
     id: "goals",
     title: "القسم الثامن: الطموحات والأهداف التربوية",
+    description:
+      "لفهم تطلعات ولي الأمر وتوجيه الخطة التربوية المخصصة (هرم ماسلو وتنمية الجوانب المتكاملة).",
     questions: [
       {
         id: "priority_dev",
-        title: "أكثر جانب ترغب في تنميته",
+        title: "ما أكثر جانب ترغب في تنميته لدى طفلك في هذه المرحلة؟",
         type: "single",
         required: true,
         options: [
           "تعزيز المهارات الاجتماعية",
-          "ضبط الانفعالات",
-          "رفع التحصيل الدراسي",
+          "ضبط الانفعالات والتحكم العاطلي",
+          "رفع مستوى التحصيل الدراسي",
           "تنمية الثقة بالنفس",
           "تطوير مهارات التواصل",
           "زيادة الاستقلالية",
-          "لا أعلم، أحتاج توجيهًا",
+          "لا أعلم تحديدًا، أحتاج مساعدة في التوجيه",
+          "أخرى",
         ],
       },
       {
         id: "activities_wanted",
-        title: "نوع الأنشطة المرغوبة بشكل منتظم",
+        title: "ما نوع الأنشطة التي تود لطفلك أن يمارسها بشكل منتظم؟",
         type: "multi",
         options: [
           "أنشطة رياضية أو حركية",
-          "أنشطة فنية",
-          "أنشطة ذهنية",
-          "أنشطة اجتماعية",
-          "دورات مهارية",
+          "أنشطة فنية (رسم، موسيقى، أشغال)",
+          "أنشطة ذهنية (ألعاب ذكاء، قراءة)",
+          "أنشطة اجتماعية (العمل الجماعي، الرحلات)",
+          "دورات مهارية (لغة، برمجة، منطق)",
           "أنشطة دينية أو قيمية",
-          "لا أعلم",
-        ],
-      },
-      {
-        id: "plan_interest",
-        title:
-          "مدى اهتمامك بالحصول على خطة تعليمية/تربوية مخصصة تساعد في تنمية طفلك",
-        type: "single",
-        required: true,
-        options: [
-          "مهتم جدًا وأرغب بتنفيذها الآن",
-          "مهتم وأحتاج توضيحًا",
-          "مهتم على المدى الطويل",
-          "غير مهتم حاليًا",
-          "لست متأكدًا",
+          "لا أعلم أو لم نجرب أنشطة بعد",
+          "أخرى",
         ],
       },
     ],
   },
 
-  // الخاتمة
+
+  // القسم 9: الخاتمة
   {
     id: "final",
     title: "خاتمة الاستبانة",
+    description:
+      "🟣 شكرًا لك على وقتك. نستخدم البيانات بسرية لتحليل شخصية وذكاءات طفلك وتقديم خطة تعليمية مخصصة. للاستفسار: aroumaEd@gmail.com",
     questions: [
       {
         id: "notes",
         title: "هل لديك أي ملاحظات إضافية أو معلومات تود مشاركتها؟",
         type: "text",
+        required: false,
       },
     ],
   },
