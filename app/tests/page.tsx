@@ -18,9 +18,7 @@ export default function TestsPage() {
             className="object-contain"
             priority
           />
-          <span className="text-lg font-extrabold tracking-tight text-[#3c2e7e]">
-        
-          </span>
+          <span className="text-lg font-extrabold tracking-tight text-[#3c2e7e]"></span>
         </div>
         <nav className="hidden md:flex items-center gap-5 text-sm text-gray-600">
           <Link href="/" className="hover:text-[#3c2e7e]">الرئيسية</Link>
@@ -39,86 +37,136 @@ export default function TestsPage() {
       <section className="relative mx-auto mt-8 w-full max-w-6xl px-6">
         <div className="rounded-[2rem] border border-[#efeafd] bg-white p-8 md:p-12 shadow-[0_10px_40px_rgba(125,115,185,0.10)]">
           <div className="flex items-center justify-center gap-4">
-            
-        
             <h1 className="text-3xl md:text-4xl font-extrabold text-center">
-              اختبارات <span className="bg-gradient-to-r from-[#7b5fe8] to-[#49d5a3] bg-clip-text text-transparent">أرومة</span> —  ماذا نقيس؟ ولماذا؟ 
+              اختبارات <span className="bg-gradient-to-r from-[#7b5fe8] to-[#49d5a3] bg-clip-text text-transparent">أرومة</span> —  ماذا نقيس؟ ولماذا؟
             </h1>
           </div>
           <p className="mt-4 text-center text-[#5b5672] max-w-3xl mx-auto leading-8">
-            نستخدم في أرومة مجموعة من الاختبارات التربوية والنفسية المبسطة، تساعدنا على فهم شخصية الطفل وطريقة تفكيره وتعلّمه. هذه الأدوات علمية ومستخدمة حول العالم، لكننا نقدّمها بلغة سهلة ونتائج عملية تفيدك في حياتك اليومية.
+            نستخدم في أرومة مجموعة من الأدوات التربوية والنفسية المبسّطة لفهم شخصية الطفل وميوله وطريقة تعلّمه وملاءمة البيئة من حوله. هذه الأدوات معتمدة في الأدبيات العالمية، ونقدّم نتائجها بلغة سهلة وخطوات عملية تناسب الروتين اليومي.
           </p>
         </div>
       </section>
 
-      {/* شبكة الاختبارات */}
+      {/* شبكة الاختبارات الأساسية */}
       <section className="mx-auto mt-10 w-full max-w-6xl px-6">
-        <div className="grid gap-6 md:grid-cols-2">
+        <h2 className="text-2xl md:text-3xl font-extrabold text-[#3c2e7e]">الاختبارات/الأدوات الأساسية</h2>
+        <div className="mt-6 grid gap-6 md:grid-cols-2">
           {/* Big Five */}
           <article className="rounded-2xl border border-[#efeafd] bg-white p-6 shadow-[0_6px_24px_rgba(130,120,160,0.08)]">
-            <h2 className="text-xl font-bold text-[#3c2e7e]">
+            <h3 className="text-xl font-bold text-[#3c2e7e]">
               السمات الخمس الكبرى للشخصية (Big Five)
-            </h2>
+            </h3>
             <p className="mt-3 text-[#4b4763] leading-7">
-              هذا النموذج يصف شخصية الإنسان من خلال خمس صفات رئيسية:
-              <strong> الانفتاح</strong> (حب التعلم والتجربة)،
-              <strong> التنظيم</strong> (الانضباط والمسؤولية)،
-              <strong> الانبساط</strong> (الاجتماعية والطاقة)،
-              <strong> التوافق</strong> (الطيبة والتعاون)، و<strong> الحساسية الانفعالية</strong> (مدى القلق أو الهدوء).
-            </p>
-            <p className="mt-2 text-[#4b4763]">
-              من خلال هذا الاختبار، نفهم طبيعة شخصية طفلك: هل يفضّل العمل الفردي أم الجماعي؟ هل يحتاج إلى استقرار وهدوء أم بيئة مرنة ومتجددة؟
+              يصف الشخصية عبر خمس أبعاد: <strong>الانفتاح للتجربة</strong>، <strong>الاجتهاد/الانضباط</strong>،
+              <strong> الانبساط/الاجتماعية</strong>، <strong>التوافق/التعاطف</strong>، و<strong>الحساسية الانفعالية</strong>.
+              يساعدنا ذلك على مواءمة أساليب التواصل والدافعية وتنظيم المهام مع طبيعة طفلك.
             </p>
             <div className="mt-4 rounded-xl bg-[#faf9ff] border border-[#efeafd] p-4 text-sm">
-              <b>الفائدة:</b> يساعد على اختيار أسلوب التعليم والتعامل الأنسب لشخصية طفلك.
+              <b>الفائدة:</b> اختيار أساليب تعليم وتواصل تناسب سِمات طفلك (مثل تقسيم المهام، التهيئة الهادئة، العمل الجماعي/الفردي).
             </div>
           </article>
 
           {/* Multiple Intelligences */}
           <article className="rounded-2xl border border-[#efeafd] bg-white p-6 shadow-[0_6px_24px_rgba(130,120,160,0.08)]">
-            <h2 className="text-xl font-bold text-[#3c2e7e]">الذكاءات المتعددة (Multiple Intelligences)</h2>
+            <h3 className="text-xl font-bold text-[#3c2e7e]">الذكاءات المتعددة (Multiple Intelligences)</h3>
             <p className="mt-3 text-[#4b4763] leading-7">
-              وضعها العالم <strong>هوارد غاردنر</strong> وتقول إن الذكاء ليس واحدًا فقط، بل هناك عدة أنواع:
-              مثل الذكاء اللغوي، المنطقي، الحركي، الاجتماعي، الموسيقي، الذاتي، والطبيعي.
-            </p>
-            <p className="mt-2 text-[#4b4763]">
-              هذا الاختبار يبيّن المجالات التي يتميّز فيها طفلك، لنساعدك على تطويرها من خلال أنشطة ممتعة وبسيطة.
+              إطار <strong>هوارد غاردنر</strong> الذي ينظر للقدرات على أنها متعددة: لغوي، منطقي/رياضي، بصري/فراغي، موسيقي، حركي/جسدي،
+              اجتماعي/تفاعلي، ذاتي/تأمّلي، وطبيعي/بيئي. نحدّد ترتيب القوة النسبي لكل نوع لدى طفلك.
             </p>
             <div className="mt-4 rounded-xl bg-[#f7fbff] border border-[#eaf5ff] p-4 text-sm">
-              <b>الفائدة:</b> يساعدك على اكتشاف مجالات تميّز طفلك ودعمه من خلالها.
+              <b>الفائدة:</b> تصميم أنشطة جذّابة تبني على نقاط القوة (قصة وكتابة، ألغاز ومنطق، رسم وبناء، موسيقى وإيقاع، حركة وتجريب… إلخ).
             </div>
           </article>
 
           {/* VAK */}
           <article className="rounded-2xl border border-[#efeafd] bg-white p-6 shadow-[0_6px_24px_rgba(130,120,160,0.08)]">
-            <h2 className="text-xl font-bold text-[#3c2e7e]">أنماط التعلّم (VAK)</h2>
+            <h3 className="text-xl font-bold text-[#3c2e7e]">أنماط التعلّم (VAK)</h3>
             <p className="mt-3 text-[#4b4763] leading-7">
-              يوضّح هذا الاختبار الطريقة التي يتعلّم بها الطفل بشكل أفضل:
-              <strong> بصريًا</strong> (يحب الصور والألوان)،
-              <strong> سمعيًا</strong> (يفهم من الشرح والكلام)، أو
-              <strong> حركيًا</strong> (يتعلم بالتجربة والحركة).
-            </p>
-            <p className="mt-2 text-[#4b4763]">
-              بمعرفة نمط التعلّم، يمكننا اقتراح أنشطة تناسبه وتجعل الدراسة أكثر متعة وسهولة.
+              يوضّح النمط الغالب في التعلّم: <strong>بصري</strong> (صور وألوان ومخططات)، <strong>سمعي</strong> (شرح وقصص وتكرار لفظي)،
+              أو <strong>حركي</strong> (تجريب ولمس وأنشطة عملية). نستخدم النمط لتقديم تعزيزات تجعل التعلّم أسهل وأكثر متعة.
             </p>
             <div className="mt-4 rounded-xl bg-[#f3fffb] border border-[#e9fbf4] p-4 text-sm">
-              <b>الفائدة:</b> يجعل التعليم ممتعًا ومناسبًا لطبيعة طفلك.
+              <b>الفائدة:</b> تحويل أي نشاط إلى تجربة تناسب نمط طفلك (ملصقات وألوان/تلخيص صوتي/تجارب ولمسيات).
             </div>
           </article>
 
-          {/* Ecological Systems */}
+          {/* Ecological / Environment Index */}
           <article className="rounded-2xl border border-[#efeafd] bg-white p-6 shadow-[0_6px_24px_rgba(130,120,160,0.08)]">
-            <h2 className="text-xl font-bold text-[#3c2e7e]">
-              النظرية البيئية (Bronfenbrenner)
-            </h2>
+            <h3 className="text-xl font-bold text-[#3c2e7e]">
+              مؤشر البيئة والدعم الأسري (Bronfenbrenner)
+            </h3>
             <p className="mt-3 text-[#4b4763] leading-7">
-              ترى هذه النظرية أن سلوك الطفل لا يتكوّن فقط من شخصيته، بل أيضًا من البيئة حوله: الأسرة، المدرسة، الأصدقاء، والمجتمع.
-            </p>
-            <p className="mt-2 text-[#4b4763]">
-              لذلك نقيس مدى انسجام هذه البيئة مع احتياجات طفلك، ونقدّم لك خطوات عملية لتحسينها إن لزم الأمر.
+              يستند إلى الفكرة البيئية التي ترى تعلّم الطفل ضمن أنظمة متداخلة (الأسرة/المدرسة/الأقران…). نقيس مدى تهيئة البيئة المنزلية
+              للدعم (روتين، تهيئة، أدوات، تواصل) ونصنّفه إلى مستويات (منخفض/متوسط/عالي) مع إرشادات رفع المؤشر.
             </p>
             <div className="mt-4 rounded-xl bg-[#fffaf5] border border-[#ffe9d6] p-4 text-sm">
-              <b>الفائدة:</b> يساعدك على خلق بيئة داعمة وصحية لطفلك داخل المنزل والمدرسة.
+              <b>الفائدة:</b> خطوات صغيرة لبيئة أكثر هدوءًا وثباتًا (توقيت ثابت، مؤقت بصري، صندوق أدوات، نهاية مشجّعة للجلسة).
+            </div>
+          </article>
+        </div>
+      </section>
+
+      {/* عناصر التقرير المكملة (ليست اختبارات، لكنها تُحوّل النتائج إلى أفعال) */}
+      <section className="mx-auto mt-12 w-full max-w-6xl px-6">
+        <h2 className="text-2xl md:text-3xl font-extrabold text-[#3c2e7e]">عناصر التقرير المُكمّلة</h2>
+        <div className="mt-6 grid gap-6 md:grid-cols-2">
+          {/* Parental Goals */}
+          <article className="rounded-2xl border border-[#eee9ff] bg-white p-6 shadow-[0_6px_24px_rgba(130,120,160,0.08)]">
+            <h3 className="text-lg font-bold text-[#3c2e7e]">الأهداف التربوية المدخلة</h3>
+            <p className="mt-2 text-[#4b4763] leading-7">
+              مدخلات بسيطة من ولي الأمر عن أولويات المرحلة (مثل الانضباط اللطيف، القراءة اليومية، تحسين التركيز).
+              تُستخدم لتوجيه التوصيات والخطة الأسبوعية بحيث تخدم هدف الأسرة الحالي.
+            </p>
+            <div className="mt-3 rounded-xl bg-[#faf9ff] border border-[#efeafd] p-3 text-sm">
+              <b>الدور:</b> تخصيص أدقّ للتوصيات ووزن الأنشطة بما يخدم أهدافك.
+            </div>
+          </article>
+
+          {/* Narrative */}
+          <article className="rounded-2xl border border-[#eee9ff] bg-white p-6 shadow-[0_6px_24px_rgba(130,120,160,0.08)]">
+            <h3 className="text-lg font-bold text-[#3c2e7e]">السرد التفسيري</h3>
+            <p className="mt-2 text-[#4b4763] leading-7">
+              ملخص لغوي مبسّط يربط أعلى الذكاءات وأنماط التعلّم والسمات البارزة مع البيئة الأسرية،
+              ويترجمها إلى “ماذا يعني ذلك عمليًا؟” بلغة واضحة لولي الأمر.
+            </p>
+            <div className="mt-3 rounded-xl bg-[#f7fbff] border border-[#eaf5ff] p-3 text-sm">
+              <b>الدور:</b> جسْر بين النتائج العلمية والسلوك اليومي داخل البيت.
+            </div>
+          </article>
+
+          {/* Quick Recs */}
+          <article className="rounded-2xl border border-[#eee9ff] bg-white p-6 shadow-[0_6px_24px_rgba(130,120,160,0.08)]">
+            <h3 className="text-lg font-bold text-[#3c2e7e]">التوصيات السريعة</h3>
+            <p className="mt-2 text-[#4b4763] leading-7">
+              قائمة قصيرة “جاهزة للتطبيق الآن” تُولّد تلقائيًا من نتائج طفلك وأهدافك، تتضمن أفكارًا عملية
+              (٣–٨ عناصر عادةً) مثل تذكير لطيف، تقسيم مهمة، دعم بصري/سمعي/حركي، وتوثيق إنجاز اليوم.
+            </p>
+            <div className="mt-3 rounded-xl bg-[#f3fffb] border border-[#e9fbf4] p-3 text-sm">
+              <b>الدور:</b> تحريك السلوك فورًا بخطوات صغيرة وثابتة.
+            </div>
+          </article>
+
+          {/* Weekly Plan */}
+          <article className="rounded-2xl border border-[#eee9ff] bg-white p-6 shadow-[0_6px_24px_rgba(130,120,160,0.08)]">
+            <h3 className="text-lg font-bold text-[#3c2e7e]">الخطة الأسبوعية (10–15 دقيقة يوميًا)</h3>
+            <p className="mt-2 text-[#4b4763] leading-7">
+              سبع بطاقات نشاط قصيرة مبنية على أعلى ذكاءين لدى طفلك، مُعززة بنمط التعلّم الغالب (VAK)،
+              مع “بهارات” خفيفة من السمات الخمس عند الحاجة (تهيئة هادئة، تقسيم، عنصر اجتماعي…).
+            </p>
+            <div className="mt-3 rounded-xl bg-[#fffaf5] border border-[#ffe9d6] p-3 text-sm">
+              <b>الدور:</b> تحويل التوصيات إلى روتين عملي ثابت وممتع.
+            </div>
+          </article>
+
+          {/* Parent Guidance */}
+          <article className="rounded-2xl border border-[#eee9ff] bg-white p-6 md:col-span-2 shadow-[0_6px_24px_rgba(130,120,160,0.08)]">
+            <h3 className="text-lg font-bold text-[#3c2e7e]">إرشادات موجّهة للوالدين</h3>
+            <p className="mt-2 text-[#4b4763] leading-7">
+              فقرة محددة للأم والأب حول مهارات دعم ينبغي تطويرها وفق شخصية الطفل ومستوى الدعم الأسري الحالي
+              (مثل: تهيئة الانتقالات بهدوء، تعزيز لفظي محدد، اتفاق على بداية/نهاية، تنظيم الأدوات، ضبط الشاشات).
+            </p>
+            <div className="mt-3 rounded-xl bg-[#faf9ff] border border-[#efeafd] p-3 text-sm">
+              <b>الدور:</b> مواءمة أسلوب الوالدين نفسيًا وتربويًا مع احتياجات الطفل لرفع أثر كل نشاط.
             </div>
           </article>
         </div>
@@ -131,10 +179,10 @@ export default function TestsPage() {
             كيف نحول نتائج الاختبارات إلى خطة تساعدك فعليًا؟
           </h3>
           <ol className="mt-4 list-decimal pr-6 text-sm leading-7 text-[#5b5672] space-y-2">
-            <li>نجمع نتائج الاختبارات الأربعة معًا لنكوّن صورة شاملة عن طفلك.</li>
-            <li>نحدّد نقاط القوة والاحتياجات في الجوانب الشخصية والتعليمية.</li>
-            <li>ننشئ خطة تحتوي على أنشطة منزلية وأفكار تربوية سهلة التطبيق.</li>
-            <li>نقترح طرق متابعة بسيطة لتلاحظي تطور طفلك مع الوقت.</li>
+            <li>نجمع مخرجات Big Five وMI وVAK مع مؤشر البيئة الأسرية لصورة شاملة.</li>
+            <li>نربطها بأهدافك الحالية لتحديد الأولويات قصيرة المدى.</li>
+            <li>نولّد توصيات سريعة وخطة أسبوعية بجرعات صغيرة قابلة للثبات.</li>
+            <li>نضيف إرشادات موجّهة للوالدين لرفع جودة التطبيق داخل البيت.</li>
           </ol>
         </div>
       </section>
@@ -153,7 +201,9 @@ export default function TestsPage() {
           </Link>
           <Link
             href="/assessment"
+            className="rounded-2xl border border-[#dedaf5] bg-white px-8 py-3 font-semibold text-[#3c2e7e] hover:bg-[#faf9ff] transition"
           >
+            اذهب إلى الاختبار
           </Link>
         </div>
         <div className="mt-6">

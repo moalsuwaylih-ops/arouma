@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import Image from "next/image"; // ✅ لإظهار اللوقو
+import Image from "next/image";
 
 const NOTICE_KEY = "arouma_notice_v1";
 
@@ -10,7 +10,6 @@ export default function HomePage() {
   const [showNotice, setShowNotice] = useState(false);
 
   useEffect(() => {
-    // يظهر الإشعار إذا لم يتم إخفاؤه من قبل
     const dismissed = localStorage.getItem(NOTICE_KEY) === "1";
     if (!dismissed) setShowNotice(true);
   }, []);
@@ -33,7 +32,6 @@ export default function HomePage() {
 
       {/* شريط علوي */}
       <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 pt-6">
-        {/* ✅ اللوقو في الهيدر */}
         <div className="flex items-center gap-3">
           <Image
             src="/logo.png"
@@ -43,17 +41,16 @@ export default function HomePage() {
             className="object-contain select-none"
             priority
           />
-          <span className="text-lg font-extrabold tracking-tight text-[#3c2e7e]">
-          </span>
+          <span className="text-lg font-extrabold tracking-tight text-[#3c2e7e]"></span>
         </div>
 
         <nav className="hidden md:flex items-center gap-5 text-sm text-gray-600">
           <a href="#why" className="hover:text-[#3c2e7e]">لماذا أرومة؟</a>
           <a href="#how" className="hover:text-[#3c2e7e]">كيف يعمل؟</a>
+          <a href="#coverage" className="hover:text-[#3c2e7e]">ماذا نحلّل؟</a>
           <a href="#faq" className="hover:text-[#3c2e7e]">الأسئلة الشائعة</a>
         </nav>
 
-        {/* زر الهيدر — صغير ويوجّه للدخول */}
         <Link
           href="/login"
           className="rounded-xl border border-[#dedaf5] bg-white px-4 py-2 text-[#3c2e7e] shadow-sm transition hover:bg-[#faf9ff]"
@@ -62,7 +59,7 @@ export default function HomePage() {
         </Link>
       </header>
 
-      {/* إشعار علوي (قابل للإخفاء) */}
+      {/* إشعار علوي */}
       {showNotice && (
         <div className="mx-auto mt-4 w-full max-w-6xl px-6">
           <div className="flex items-center justify-between rounded-2xl border border-[#efeafd] bg-white/80 px-4 py-3 shadow-[0_8px_24px_rgba(125,115,185,0.10)] backdrop-blur">
@@ -91,7 +88,7 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* بطل الصفحة */}
+      {/* البطل */}
       <section className="relative mx-auto mt-10 w-full max-w-6xl px-6">
         <div className="grid items-center gap-10 md:grid-cols-2">
           <div>
@@ -101,55 +98,56 @@ export default function HomePage() {
             <h1 className="mt-4 text-3xl md:text-5xl font-extrabold leading-[1.2] text-[#31255f]">
               نفهم طفلك{" "}
               <span className="bg-gradient-to-r from-[#7b5fe8] to-[#49d5a3] bg-clip-text text-transparent">
-                بعمق 
+                بعمق
               </span>
-                 <span className="whitespace-nowrap"> </span>
             </h1>
+
+            {/* وصف يغطي جميع الجوانب */}
             <p className="mt-4 text-[1.05rem] leading-8 text-[#5b5672]">
-              في <strong>أرومة</strong> نحلّل شخصية طفلك وميوله وأنماط تعلّمه باستخدام
-              <strong> الذكاءات المتعددة</strong>، <strong>أنماط التعلم</strong>، وملامح
-              <strong> السمات الخمسة الكبرى للشخصية</strong>، مع قراءة للبيئة الأسرية،
-              ثم نولّد <strong>توصيات عملية</strong> وأنشطة منزلية سهلة التطبيق.
+              في أرومة نحلّل شخصية طفلك وميوله وأنماط تعلّمه باستخدام الذكاءات المتعددة (MI)، وأنماط التعلم (VAK)،
+              وملامح السمات الخمسة الكبرى للشخصية (Big Five)، مع قراءة دقيقة للبيئة والدعم الأسري وفق نموذج
+              برونفنبرنر، ثم نولّد سردًا تفسيريًا مبسّطًا، توصيات سريعة قابلة للتطبيق، خطة أسبوعية 10–15 دقيقة يوميًا،
+              وإرشادات موجّهة للوالدين لتطوير أساليب الدعم في المنزل.
             </p>
 
-            {/* CTA الرئيسي فقط هنا */}
+            {/* CTA */}
             <div className="mt-6 flex items-stretch gap-3">
               <Link
                 href="/register"
                 className="flex-1 rounded-2xl bg-gradient-to-r from-[#7b5fe8] to-[#49d5a3] px-6 py-3 text-center text-white font-semibold shadow-md transition hover:scale-[1.02] hover:shadow-lg"
               >
-                ابدأ الآن 
+                ابدأ الآن
               </Link>
               <a
                 href="/tests"
                 className="flex-1 rounded-2xl border border-[#dedaf5] bg-white px-6 py-3 text-center font-semibold text-[#3c2e7e] hover:bg-[#faf9ff] transition"
               >
-                 تعرف على اختبارات أرومة 
+                تعرف على اختبارات أرومة
               </a>
             </div>
 
             <p className="mt-3 text-xs text-gray-500">
-              يستغرق 10–15 دقيقة • 48 سؤالًا خفيفًا • البيانات سرّية
+              يستغرق 10–15 دقيقة • 9 أقسام تحليلية • البيانات سرّية
             </p>
           </div>
 
-          {/* بطاقة لافتة سريعة */}
+          {/* بطاقة لافتة */}
           <div className="rounded-[2rem] border border-[#efeafd] bg-white/70 p-6 shadow-[0_10px_40px_rgba(125,115,185,0.12)]">
             <div className="grid gap-4 sm:grid-cols-3">
               <div className="rounded-2xl border border-[#f1eefc] bg-[#faf9ff] p-4 text-center">
                 <div className="text-2xl">⚡️</div>
                 <p className="mt-2 font-semibold">سريع وخفيف</p>
-                <p className="text-xs text-gray-500">8 أقسام قصيرة</p>
+                <p className="text-xs text-gray-500">أسئلة قصيرة</p>
               </div>
               <div className="rounded-2xl border border-[#e9fbf4] bg-[#f3fffb] p-4 text-center">
                 <div className="text-2xl">🧪</div>
                 <p className="mt-2 font-semibold">منهجيّ وعلمي</p>
-                <p className="text-xs text-gray-500">MI • VAK • Big Five</p>
+                <p className="text-xs text-gray-500">MI • VAK • Big Five • Bronfenbrenner</p>
               </div>
               <div className="rounded-2xl border border-[#eaf5ff] bg-[#f7fbff] p-4 text-center">
                 <div className="text-2xl">🎯</div>
-                <p className="mt-2 font-semibold">خطة مصممة لطفلك</p>
-                <p className="text-xs text-gray-500">توصيات عملية</p>
+                <p className="mt-2 font-semibold">خطة + إرشادات</p>
+                <p className="text-xs text-gray-500">خطة أسبوعية • إرشادات للوالدين</p>
               </div>
             </div>
           </div>
@@ -163,19 +161,19 @@ export default function HomePage() {
           {[
             {
               t: "لغة بسيطة ونتيجة واضحة",
-              d: "نترجم التحليل إلى ملخص سهل بعيد عن المصطلحات المعقّدة مع خطوات صغيرة قابلة للتنفيذ.",
+              d: "ملخص تفسيري مفهوم بعيد عن المصطلحات المعقّدة، مع خطوات قابلة للتنفيذ فورًا.",
             },
             {
               t: "يركّز على نقاط قوّة طفلك",
-              d: "نُبرز ما يُتقنه طفلك ونبني عليه بدل التركيز على جوانب الضعف فقط.",
+              d: "نُبرز ما يتقنه طفلك ونبني عليه قبل معالجة جوانب التحسين.",
             },
             {
               t: "متوافق مع الروتين اليومي",
-              d: "أنشطة قصيرة وآمنة للتطبيق داخل البيت والمدرسة بدون تجهيزات مرهقة.",
+              d: "أنشطة قصيرة وآمنة داخل البيت والمدرسة بدون تجهيزات مرهقة.",
             },
             {
-              t: "قابل للتطوير لاحقًا",
-              d: "نُهيئ بياناتك لتقارير أعمق ولوحات مرئية عندما ترغب بالترقية.",
+              t: "يشمل دعم الوالدين",
+              d: "نصائح مخصصة للأم والأب لتحسين أسلوب الدعم والتواصل بناءً على شخصية الطفل.",
             },
           ].map((c) => (
             <div
@@ -194,9 +192,9 @@ export default function HomePage() {
         <h2 className="text-2xl md:text-3xl font-extrabold text-[#3c2e7e]">كيف يعمل أرومة؟</h2>
         <div className="mt-6 grid gap-6 sm:grid-cols-3">
           {[
-            { n: "1", t: "مجالات الاختبار", d: "أسئلة قصيرة تُغطي السمات الكبرى الخمس للشخصية، نظرية الذكاءات المتعددة، أنماط التعلم، والبيئة الأسرية." },
-            { n: "2", t: "تحليل فوري", d: "نحسب المؤشرات داخليًا ونولّد توصيات تربوية شخصية." },
-            { n: "3", t: "طبّق بخطوات سهلة", d: "خطوات منزلية بسيطة تدعم نمو طفلك بثقة وطمأنينة." },
+            { n: "1", t: "تعبئة ذكية", d: "أسئلة قصيرة تغطي الشخصية، الميول، أنماط التعلم، والبيئة الأسرية." },
+            { n: "2", t: "تحليل فوري", d: "حساب المؤشرات داخليًا (MI/VAK/Big Five/Environment) وسرد النتائج." },
+            { n: "3", t: "تطبيق عملي", d: "توصيات قصيرة، خطة أسبوعية، وإرشادات للوالدين قابلة للتنفيذ فورًا." },
           ].map((s) => (
             <div key={s.n} className="relative rounded-2xl border border-[#e8f1ff] bg-white p-6">
               <span className="absolute -top-3 -right-3 inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7b5fe8] to-[#49d5a3] text-white font-bold shadow-md">
@@ -207,7 +205,58 @@ export default function HomePage() {
             </div>
           ))}
         </div>
-{/* ✅ قسم الأسئلة السريعة */}
+      </section>
+
+      {/* ماذا نحلّل؟ — تغطية مفصّلة لكل الجوانب */}
+      <section id="coverage" className="mx-auto mt-20 w-full max-w-6xl px-6">
+        <h2 className="text-2xl md:text-3xl font-extrabold text-[#3c2e7e]">ماذا نحلّل داخل التقرير؟</h2>
+        <div className="mt-6 grid gap-5 md:grid-cols-2">
+          {[
+            {
+              t: "الذكاءات المتعددة (MI)",
+              d: "لغوي، منطقي، بصري/فراغي، موسيقي، حركي، اجتماعي، ذاتي، طبيعي — مع ترتيب القوّة ونِسَب مئوية.",
+            },
+            {
+              t: "أنماط التعلم (VAK)",
+              d: "بصري/سمعي/حركي — تحديد النمط الغالب ونصائح تعزيز تناسب الروتين.",
+            },
+            {
+              t: "السمات الخمس الكبرى",
+              d: "الانبساط، الانفتاح، التوافق، الانضباط، الحساسية الانفعالية — وصف عملي وفق النسب.",
+            },
+            {
+              t: "البيئة والدعم الأسري",
+              d: "مؤشر دعم أسري وفق برونفنبرنر (نسبة ومستوى) + نصائح رفع المؤشر حسب المستوى.",
+            },
+            {
+              t: "السرد التفسيري",
+              d: "ملخص لغوي مبسّط يربط مخرجات MI/VAK/Big Five بالروتين اليومي.",
+            },
+            {
+              t: "التوصيات السريعة",
+              d: "حتى 8 توصيات مختارة تلقائيًا حسب نتائج طفلك وأهدافك الحالية.",
+            },
+            {
+              t: "خطة أسبوعية (10–15 دقيقة)",
+              d: "أنشطة قصيرة مخصّصة لأعلى الذكاءات مع معززات VAK ومواءمات Big Five.",
+            },
+            {
+              t: "إرشادات موجّهة للوالدين",
+              d: "نصائح محددة للأم والأب عمّا يحتاجان لتطويره لدعم الطفل بفاعلية.",
+            },
+          ].map((c) => (
+            <div
+              key={c.t}
+              className="rounded-2xl border border-[#eee9ff] bg-white p-5 shadow-[0_6px_24px_rgba(130,120,160,0.08)]"
+            >
+              <p className="font-semibold text-[#3c2e7e]">{c.t}</p>
+              <p className="mt-2 text-sm leading-7 text-[#5b5672]">{c.d}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* الأسئلة السريعة */}
       <section id="faq" className="mx-auto my-20 w-full max-w-6xl px-6">
         <div className="rounded-3xl border border-[#efeafd] bg-white p-6 md:p-8 shadow-[0_10px_40px_rgba(125,115,185,0.08)]">
           <h3 className="text-xl font-extrabold text-[#3c2e7e] text-center md:text-right">
@@ -217,45 +266,42 @@ export default function HomePage() {
             <div>
               <p className="font-semibold text-[#31255f]">هل البيانات سرّية؟</p>
               <p className="text-sm text-[#5b5672] mt-1">
-                نعم، تُستخدم فقط لأغراض التقييم والتوصيات، وتُحفظ محليًا بشكل آمن.
+                نعم، تُستخدم لأغراض التقييم فقط، مع حفظ محلي آمن وإمكانية الحفظ/الطباعة للمشاركة.
               </p>
             </div>
             <div>
               <p className="font-semibold text-[#31255f]">هل يصلح لكل الأعمار؟</p>
               <p className="text-sm text-[#5b5672] mt-1">
-                مخصص للأطفال حتى سن 13 سنة، مع تطوير نسخة للمراهقين قريبًا.
+                مخصص حتى 13 سنة، مع نسخة للمراهقين قيد التطوير.
               </p>
             </div>
             <div>
               <p className="font-semibold text-[#31255f]">هل يمكن مشاركة النتيجة؟</p>
               <p className="text-sm text-[#5b5672] mt-1">
-                يمكنك حفظ أو طباعة التقرير ومشاركته مع المختصين أو المعلمين.
+                يمكنك حفظ أو طباعة التقرير ومشاركته مع المعلمين أو المختصين.
               </p>
             </div>
             <div>
               <p className="font-semibold text-[#31255f]">هل الاختبار مجاني؟</p>
               <p className="text-sm text-[#5b5672] mt-1">
-                نعم حاليًا مجاني تمامًا خلال المرحلة التجريبية.
+                نعم خلال المرحلة التجريبية المبكرة.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-        {/* CTA الختامي فقط هنا */}
-        <div className="mt-8 text-center">
-          <Link
-            href="/register"
-            className="inline-block rounded-2xl bg-gradient-to-r from-[#7b5fe8] to-[#49d5a3] px-10 py-3 text-white font-semibold shadow-md transition hover:scale-[1.02] hover:shadow-lg"
-          >
-            ابدأ الآن
-          </Link>
-
-          
-          <p className="mt-4 text-xs text-gray-500">
-            بالضغط على البدء، توافق على سياسة الخصوصية واستخدام البيانات لأغراض التقييم.
-          </p>
-        </div>
+      {/* CTA الختامي */}
+      <section className="mx-auto mb-16 w-full max-w-6xl px-6 text-center">
+        <Link
+          href="/register"
+          className="inline-block rounded-2xl bg-gradient-to-r from-[#7b5fe8] to-[#49d5a3] px-10 py-3 text-white font-semibold shadow-md transition hover:scale-[1.02] hover:shadow-lg"
+        >
+          ابدأ الآن
+        </Link>
+        <p className="mt-4 text-xs text-gray-500">
+          بالضغط على البدء، توافق على سياسة الخصوصية واستخدام البيانات لأغراض التقييم.
+        </p>
       </section>
 
       <footer className="border-t border-[#efeafd] bg-white/60">
