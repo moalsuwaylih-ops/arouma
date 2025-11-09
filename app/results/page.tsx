@@ -10,15 +10,106 @@ type VAK = {
 };
 type Big5 = { percent: { E: number; O: number; A: number; C: number; N: number } };
 type Env = { supportScore: number; supportPercent: number; level: "عالي" | "متوسط" | "منخفض" };
+type ParentCoaching = { forFamily: string[]; forMother: string[]; forFather: string[] };
 
-// يحدد المستوى نصيًا عبر النسبة
+/** ====== أدوات بيانية ====== */
+const brand = {
+  gradFrom: "#7b5fe8",
+  gradTo: "#49d5a3",
+  ink: "#3c2e7e",
+  sub: "#5b5672",
+  cardBorder: "#efeafd",
+  cardGlow: "0 10px 40px rgba(125,115,185,0.12)",
+};
+
+const Bar = ({ value }: { value: number }) => (
+  <div className="h-2 w-full rounded-full bg-gray-100">
+    <div
+      className="h-2 rounded-full"
+      style={{
+        width: `${Math.max(0, Math.min(100, value))}%`,
+        background: `linear-gradient(90deg, ${brand.gradFrom}, ${brand.gradTo})`,
+      }}
+    />
+  </div>
+);
+
+/** ====== خرائط تسميات وشرح ====== */
+const miLabels: Record<string, string> = {
+  linguistic: "لغوي/لساني",
+  logical: "منطقي/رياضي",
+  spatial: "بصري/فراغي",
+  musical: "موسيقي/إيقاعي",
+  bodily: "حركي/جسدي",
+  interpersonal: "اجتماعي/تفاعلي",
+  intrapersonal: "ذاتي/تأمّلي",
+  naturalist: "طبيعي/بيئي",
+};
+const miExplain: Record<string, string> = {
+  linguistic: "يميل للفهم عبر الكلمات والقصص والحوار ويحب سرد الأحداث والتعبير اللفظي.",
+  logical: "يفكر بخطوات وتسلسل، ويستمتع بالألغاز والمنطق والأرقام و”كيف تعمل الأشياء؟“.",
+  spatial: "يتعلّم أفضل عبر الصور والألوان والمكعبات والخرائط الذهنية والتخيل.",
+  musical: "يلتقط الإيقاعات بسرعة ويستفيد من المسموعات لحفظ المعلومات.",
+  bodily: "يتعلم بالممارسة والحركة ولمس الأشياء ويناسبه تحويل التعلم إلى نشاط جسدي.",
+  interpersonal: "يزدهر في العمل الجماعي والتفاعل ويتعلم عبر الأدوار الاجتماعية والنقاش.",
+  intrapersonal: "يحب العمل الهادئ والتفكير الذاتي ويناسبه دفتر للتعبير عن المشاعر والتجربة اليومية.",
+  naturalist: "تجذبه الطبيعة والزراعة والحيوانات ويحب تصنيف الأشياء وترتيبها.",
+};
+
+const vakLabel: Record<"visual" | "auditory" | "kinesthetic", string> = {
+  visual: "بصري",
+  auditory: "سمعي",
+  kinesthetic: "حركي",
+};
+const vakExplain: Record<"visual" | "auditory" | "kinesthetic", string> = {
+  visual: "يفهم أكثر مع الصور والبطاقات والألوان والمخططات.",
+  auditory: "يتعلم من الشرح الشفهي والقصص والتكرار اللفظي.",
+  kinesthetic: "يتقن عند التجريب واللعب العملي والأنشطة الحركية.",
+};
+
+const big5Label = {
+  E: "الانبساط/الاجتماعية",
+  O: "الانفتاح للتجربة",
+  A: "التوافق/التعاطف",
+  C: "الاجتهاد/الانضباط",
+  N: "الحساسية الانفعالية",
+} as const;
+
+/** يشرح السمة حسب قيمتها */
+function describeBig5(key: keyof Big5["percent"], value: number): string {
+  const v = Math.round(value);
+  if (key === "E") {
+    if (v >= 65) return "يميل للتفاعل والمشاركة واللعب الجماعي.";
+    if (v <= 35) return "يميل للهدوء والملاحظة ويحتاج تشجيعًا لطيفًا للمشاركة.";
+    return "توازن مناسب بين التفاعل والهدوء.";
+  }
+  if (key === "O") {
+    if (v >= 65) return "فضول جيد وحب لتجربة الجديد والتعلّم من المواقف اليومية.";
+    if (v <= 35) return "يفضّل المألوف؛ قد يستفيد من التدرج في تقديم الخبرات الجديدة.";
+    return "درجة متوازنة من الفضول والانفتاح.";
+  }
+  if (key === "A") {
+    if (v >= 65) return "تعاون وتعاطف وراحة اجتماعية ملحوظة.";
+    if (v <= 35) return "يحتاج توجيهًا بسيطًا لفهم مشاعر الآخرين والدور بالتبادل.";
+    return "انسجام اجتماعي جيد في المواقف اليومية.";
+  }
+  if (key === "C") {
+    if (v >= 65) return "تنظيم ومثابرة جيدة؛ يستفيد من أهداف واضحة.";
+    if (v <= 35) return "يستفيد من تقسيم المهام لخطوات صغيرة مع متابعة لطيفة.";
+    return "التزام مقبول يتحسن بالروتين والتذكير.";
+  }
+  // N
+  if (v >= 65) return "حساسية أعلى للمثيرات؛ الروتين الهادئ والانتقالات المهيّأة تساعده.";
+  if (v <= 35) return "ثبات انفعالي جيد؛ يتعامل مع التغيّر بسهولة نسبية.";
+  return "استجابة عاطفية متوازنة في المواقف الجديدة.";
+}
+
+/** ====== بيئة الأسرة: مستوى ونصائح ====== */
 function envLevelFromPercent(p: number): "عالي" | "متوسط" | "منخفض" {
   if (p >= 70) return "عالي";
   if (p >= 40) return "متوسط";
   return "منخفض";
 }
-
-// نصائح عملية قصيرة لرفع المؤشر حسب المستوى
 function envAdvice(percent: number): { intro: string; bullets: string[] } {
   const level = envLevelFromPercent(percent);
   if (level === "منخفض") {
@@ -46,15 +137,17 @@ function envAdvice(percent: number): { intro: string; bullets: string[] } {
   return {
     intro: "نتيجة ممتازة! عززها بالتنويع الخفيف وزيادة مشاركة الطفل في الاختيار.",
     bullets: [
-      "دع الطفل يختار نشاط يقوم به معك.",
+      "دع الطفل يختار نشاطًا يقوم به معك.",
       "أضِف هدفًا أسبوعيًا صغيرًا.",
       "قدّم نشاطًا مشتركًا مع أخ/أخت مرة واحدة أسبوعيًا.",
     ],
   };
 }
 
+/** ====== الصفحة ====== */
 export default function ResultsPage() {
   const [data, setData] = useState<any>(null);
+  const hasData = !!data;
 
   useEffect(() => {
     try {
@@ -63,10 +156,13 @@ export default function ResultsPage() {
     } catch {}
   }, []);
 
-  // ✅ لا نُرجِع مبكرًا. بدله فلاغ + قيم افتراضية آمنة
-  const hasData = !!data;
+  // اسم الطفل (إن لم يتوفر، نستخدم "طفلك")
+  const childName: string =
+    data?.childName ||
+    data?.answers?.child_name ||
+    "طفلك";
 
-  const childName: string = data?.childName || "طفلك";
+  // كتل النتائج مع قيم افتراضية آمنة
   const mi: { result: MiResult; ranking: string[] } =
     data?.mi || { result: {}, ranking: [] };
   const vak: VAK =
@@ -76,102 +172,14 @@ export default function ResultsPage() {
   const env: Env =
     data?.environment || { supportScore: 0, supportPercent: 0, level: "منخفض" };
   const recs: string[] = data?.recs || [];
+  const parent: ParentCoaching | undefined = data?.parentCoaching;
 
-  /** ==== الهوية: ألوان/ستايلات متناسقة مع المشروع ==== */
-  const brand = {
-    gradFrom: "#7b5fe8",
-    gradTo: "#49d5a3",
-    ink: "#3c2e7e",
-    sub: "#5b5672",
-    cardBorder: "#efeafd",
-    cardGlow: "0 10px 40px rgba(125,115,185,0.12)",
-  };
-
-  /** ==== خرائط تسميات وشرح مبسّط ==== */
-  const miLabels: Record<string, string> = {
-    linguistic: "لغوي/لساني",
-    logical: "منطقي/رياضي",
-    spatial: "بصري/فراغي",
-    musical: "موسيقي/إيقاعي",
-    bodily: "حركي/جسدي",
-    interpersonal: "اجتماعي/تفاعلي",
-    intrapersonal: "ذاتي/تأمّلي",
-    naturalist: "طبيعي/بيئي",
-  };
-  const miExplain: Record<string, string> = {
-    linguistic: "يميل للفهم عبر الكلمات والقصص والحوار ويحب سرد الأحداث والتعبير اللفظي",
-    logical: "يفكر بخطوات وتسلسل، ويستمتع بالألغاز والمنطق والأرقام و”كيف تعمل الأشياء؟“",
-    spatial: "يتعلّم أفضل عبر الصور والألوان والمكعبات والخرائط الذهنية والتخيل",
-    musical: "يلتقط الإيقاعات بسرعة ويستفيد من المسموعات لحفظ المعلومات",
-    bodily: "يتعلم بالممارسة والحركة ولمس الأشياء ويناسبه تحويل التعلم إلى نشاط جسدي",
-    interpersonal: "يزدهر في العمل الجماعي والتفاعل ويتعلم عبر الأدوار الاجتماعية والنقاش",
-    intrapersonal: "يحب العمل الهادئ والتفكير الذاتي ويناسبه أن يكون له دفتر يعبر فيه كتابةً أفكاره ومشاعره وتجربته اليومية ",
-    naturalist: "تجذبه الطبيعة والزراعة والحيوانات والأنشطة الخارجية ويحب تصنيف الأشياء وترتيبها ",
-  };
-
-  const vakLabel: Record<keyof VAK["percent"], string> = {
-    visual: "بصري",
-    auditory: "سمعي",
-    kinesthetic: "حركي",
-  };
-  const vakExplain: Record<keyof VAK["percent"], string> = {
-    visual: "يفهم أكثر مع الصور والبطاقات والألوان والمخططات.",
-    auditory: "يتعلم من الشرح الشفهي والقصص والتكرار اللفظي.",
-    kinesthetic: "يتقن عند التجريب واللعب العملي والأنشطة الحركية.",
-  };
-
-  const big5Label = {
-    E: "الانبساط/الاجتماعية",
-    O: "الانفتاح للتجربة",
-    A: "التوافق/التعاطف",
-    C: "الاجتهاد/الانضباط",
-    N: "الحساسية الانفعالية",
-  } as const;
-  const big5Explain: Record<keyof Big5["percent"], string> = {
-    E: " كلما ارتفعت النسبة، دل ذلك على ميل للمشاركة واللعب مع الآخرين",
-    O: " كلما ارتفعت النسبة، دل ذلك على حب الاكتشاف والتعلم الذاتي والفضول والتجارب الجديدة",
-    A: "كلما ارتفعت النسبة، دل ذلك على انسجام عاطفي أكبر مع الآخرين",
-    C: " كلما ارتفعت النسبة، دل ذلك على التزام بالمهام والتعليمات",
-    N: "كلما ارتفعت النسبة، دل ذلك على حساسية عاطفية أكبر ",
-  };
-// يشرح السمة حسب قيمتها
-function describeBig5(
-  key: keyof Big5["percent"],
-  value: number
-): string {
-  const v = Math.round(value);
-  if (key === "E") {
-    if (v >= 65) return "يميل للتفاعل والمشاركة واللعب الجماعي.";
-    if (v <= 35) return "يميل للهدوء والملاحظة ويحتاج تشجيعًا لطيفًا للمشاركة.";
-    return "توازن مناسب بين التفاعل والهدوء.";
-  }
-  if (key === "O") {
-    if (v >= 65) return "فضول جيد وحب لتجربة الجديد والتعلّم من المواقف اليومية.";
-    if (v <= 35) return "يفضّل المألوف؛ قد يستفيد من التدرج في تقديم الخبرات الجديدة.";
-    return "درجة متوازنة من الفضول والانفتاح.";
-  }
-  if (key === "A") {
-    if (v >= 65) return "تعاون وتعاطف وراحة اجتماعية ملحوظة.";
-    if (v <= 35) return "يحتاج توجيهًا بسيطًا لفهم مشاعر الآخرين والدور بالتبادل.";
-    return "انسجام اجتماعي جيد في المواقف اليومية.";
-  }
-  if (key === "C") {
-    if (v >= 65) return "تنظيم ومثابرة جيدة؛ يستفيد من أهداف واضحة.";
-    if (v <= 35) return "يستفيد من تقسيم المهام لخطوات صغيرة مع متابعة لطيفة.";
-    return "التزام مقبول يتحسن بالروتين والتذكير.";
-  }
-  // N الحساسية الانفعالية
-  if (v >= 65) return "حساسية أعلى للمثيرات؛ الروتين الهادئ والانتقالات المهيّأة تساعده.";
-  if (v <= 35) return "ثبات انفعالي جيد؛ يتعامل مع التغيّر بسهولة نسبية.";
-  return "استجابة عاطفية متوازنة في المواقف الجديدة.";
-}
-
-  /** ==== فقرة سردية مُبسّطة ==== */
+  /** فقرة سردية مُبسّطة */
   const narrative = useMemo(() => {
-    if (!hasData) return []; // ✅ حراسة لمنع إنشاء نصوص بدون بيانات
+    if (!hasData) return [];
     const topMI = (mi?.ranking || []).slice(0, 3);
     const topMIText = topMI.map((k) => miLabels[k] || k).join("، ");
-    const vakTop = vak?.ranking?.[0] as keyof VAK["percent"] | undefined;
+    const vakTop = vak?.ranking?.[0] as "visual" | "auditory" | "kinesthetic" | undefined;
 
     const parts: string[] = [];
     parts.push(
@@ -183,87 +191,39 @@ function describeBig5(
       );
     }
     if (vakTop) {
-      parts.push(`في أنماط التعلم، النمط الغالب: **${vakLabel[vakTop]}** — ${vakExplain[vakTop]}.`);
+      parts.push(`في أنماط التعلم، النمط الغالب: <strong>${vakLabel[vakTop]}</strong> — ${vakExplain[vakTop]}.`);
     }
     const topTraits = Object.entries(big5?.percent || {})
       .sort((a, b) => b[1] - a[1])
       .slice(0, 2)
-      .map(([k, v]) => `**${big5Label[k as keyof Big5["percent"]]} (${v}%)**`)
+      .map(([k, v]) => `<strong>${big5Label[k as keyof Big5["percent"]]} (${v}%)</strong>`)
       .join(" و ");
     if (topTraits) parts.push(`سمات الشخصية الأبرز: ${topTraits}.`);
     if (env) {
       parts.push(
-        `الدعم الأسري حاليًا **${env.level}** (${env.supportPercent}%). كلما ارتفع، سهل تنفيذ الأنشطة بثبات وطمأنينة.`
+        `الدعم الأسري حاليًا <strong>${env.level}</strong> (${env.supportPercent}%). كلما ارتفع، سهل تنفيذ الأنشطة بثبات وطمأنينة.`
       );
     }
     return parts;
   }, [hasData, childName, mi, vak, big5, env]);
-// يحدد مستوى الدعم نصيًا من خلال النسبة
-function envLevelFromPercent(p: number): "عالي" | "متوسط" | "منخفض" {
-  if (p >= 70) return "عالي";
-  if (p >= 40) return "متوسط";
-  return "منخفض";
-}
 
-// يرجع نصائح عملية قصيرة لرفع المؤشر حسب المستوى
-function envAdvice(percent: number): { intro: string; bullets: string[] } {
-  const level = envLevelFromPercent(percent);
-  if (level === "منخفض") {
-    return {
-      intro:
-        "ابدأ بخطوات صغيرة وثابتة؛ الهدف تأسيس أساس هادئ قبل التوسع.",
-      bullets: [
-        "اختر وقتًا يوميًا ثابتًا (10–15 دقيقة) بلا شاشات أو مشتتات.",
-        "نشاط واحد بسيط كل يوم، وكرّره 3 أيام لتكوين عادة.",
-        "جهّز الأدوات في صندوق صغير قريب (دفتر، أقلام، بطاقات).",
-        "قدّم الانتقالات بهدوء: عدّ تنازلي 10→1 ثم ابدأ النشاط.",
-      ],
-    };
-  }
-  if (level === "متوسط") {
-    return {
-      intro:
-        "الأساس جيد! نحتاج تعزيز الثبات ورفع جودة التواصل أثناء النشاط.",
-      bullets: [
-        "أضِف تذكيرًا لطيفًا قبل وقت النشاط بـ 5 دقائق.",
-        "اتفقوا على “بداية/نهاية” واضحة (جرس صغير/مؤقت بصري).",
-        "وثّقوا إنجاز اليوم بعلامة ✅ في تقويم الحائط.",
-        "اختتموا كل جلسة بثلاث كلمات تشجيع محددة.",
-      ],
-    };
-  }
-  return {
-    intro:
-      "نتيجة ممتازة! عززها  بالتنويع الخفيف وزيادة مشاركة الطفل في الاختيار.",
-    bullets: [
-      "دع الطفل يختار نشاط تقومون به سوياً.",
-      "أضِف هدفًا أسبوعيًا صغيرًا.",
-      "قدّم نشاطًا مشتركًا مع أخ/أخت مرة واحدة أسبوعيًا.",
-    ],
-  };
-}
-
-  /** ==== خطة أسبوعية منوّعة (تبديل حسب أعلى MI + تعزيزات VAK + بهارات Big5) ==== */
+  /** خطة أسبوعية (مختصرة) */
   const weeklyPlan = useMemo(() => {
     const weekDays = ["السبت","الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة"];
-
     const topMIs = (mi?.ranking || []).slice(0, 2);
     const primaryMI = topMIs[0] || "linguistic";
     const secondaryMI = topMIs[1] || primaryMI;
-
-    const vakTop = (vak?.ranking?.[0] as keyof VAK["percent"]) || "visual";
-
+    const vakTop = (vak?.ranking?.[0] as "visual" | "auditory" | "kinesthetic") || "visual";
     const byMI: Record<string, string[]> = {
       linguistic: [
-        "قصة قصيرة ثم يسرد ${الطفل} أحداثها بثلاث جُمل.",
+        "قصة قصيرة ثم يسرد {{child}} أحداثها بثلاث جُمل.",
         "لعبة مفردات: 5 كلمات جديدة + جملة لكل كلمة.",
-         "كتابة بطاقة شكر/دعوة بسيطة والتقاط صورة لها.",
+        "كتابة بطاقة شكر/دعوة بسيطة والتقاط صورة لها.",
       ],
       logical: [
         "حل لغز عددي بسيط أو بازل وترتيب خطوات الحل.",
         "تحدّي “لماذا/كيف تعمل؟” حول شيء في البيت.",
         "متاهة ورقية أو مكعبات بخطوات مرقمة.",
-        "تصنيف 6 أشياء لمجموعتين وشرح سبب التصنيف.",
       ],
       spatial: [
         "ليغو/مكعبات لصناعة شكل ثم وصفه.",
@@ -296,42 +256,20 @@ function envAdvice(percent: number): { intro: string; bullets: string[] } {
         "سقي/رعاية نبتة + صورة قبل/بعد.",
       ],
     };
-
-    // تعزيزات متنوّعة حسب VAK (تدور خلال الأسبوع)
-    const boosters: Record<keyof VAK["percent"], string[]> = {
-      visual: [
-        "أضف بطاقة/رسم/لون لكل خطوة.",
-        "صُوِّر ملصق قبل/بعد للنشاط.",
-        "استخدم مخططًا صغيرًا بنقاط/أسهم.",
-      ],
-      auditory: [
-        "اشرح شفهيًا أولًا ثم ناقش بصوتٍ عالٍ.",
-        "سجّل ملخصًا صوتيًا في نهاية النشاط.",
-        "كرّر الكلمات المفتاحية كـ “كلمة اليوم”.",
-      ],
-      kinesthetic: [
-        "حوّل كل خطوة إلى حركة/لمس/تجريب.",
-        "استراحة حركة 30 ثانية كل 3 دقائق.",
-        "استخدم أدوات ملموسة قدر الإمكان.",
-      ],
+    const boosters: Record<"visual" | "auditory" | "kinesthetic", string[]> = {
+      visual: ["أضف بطاقة/رسم/لون لكل خطوة.","صُوِّر ملصق قبل/بعد للنشاط.","استخدم مخططًا صغيرًا بنقاط/أسهم."],
+      auditory: ["اشرح شفهيًا أولًا ثم ناقش بصوتٍ عالٍ.","سجّل ملخصًا صوتيًا في نهاية النشاط.","كرّر الكلمات المفتاحية كـ “كلمة اليوم”."],
+      kinesthetic: ["حوّل كل خطوة إلى حركة/لمس/تجريب.","استراحة حركة 30 ثانية كل 3 دقائق.","استخدم أدوات ملموسة قدر الإمكان."],
     };
-
     const b = big5?.percent || { N:50, C:50, E:50, O:50, A:50 };
 
     return weekDays.map((day, i) => {
-      // نبدّل بين أعلى MI وأعلى MI ثاني
       const miKey = i % 2 === 0 ? primaryMI : secondaryMI;
       const bank = byMI[miKey] || byMI.linguistic;
+      const act1 = bank[i % bank.length].replace("{{child}}", childName);
+      const act2 = bank[(i + 1) % bank.length].replace("{{child}}", childName);
+      const booster = boosters[vakTop][i % boosters[vakTop].length];
 
-      // نختار نشاطين مختلفين كل يوم بالدوران على القائمة
-      const act1 = bank[i % bank.length];
-      const act2 = bank[(i + 1) % bank.length];
-
-      // نعزّز ببوستر VAK متغيّر
-      const boosterPack = boosters[vakTop];
-      const booster = boosterPack[i % boosterPack.length];
-
-      // “بهارات” شخصية خفيفة من Big5 (نضيف واحدة فقط يوميًا)
       const spices: string[] = [];
       if (b.N >= 65 && i % 2 === 0) spices.push("ابدأ بدقيقتين تنفّس هادئ وانتقال واضح بين المهام.");
       if (b.C < 45 && spices.length === 0)  spices.push("قسّم المهمة إلى 3 خطوات قصيرة مع متابعة لطيفة.");
@@ -340,28 +278,10 @@ function envAdvice(percent: number): { intro: string; bullets: string[] } {
 
       return {
         day,
-        items: [
-          act1.replace("${الطفل}", childName),
-          act2.replace("${الطفل}", childName),
-          `تعزيز VAK: ${booster}`,
-          ...(spices[0] ? [`مراعاة شخصية: ${spices[0]}`] : []),
-        ],
+        items: [act1, act2, `تعزيز VAK: ${booster}`, ...(spices[0] ? [`مراعاة شخصية: ${spices[0]}`] : [])],
       };
     });
   }, [mi, vak, big5, childName]);
-
-  /** ==== عناصر واجهة مساعدة ==== */
-  const Bar = ({ value }: { value: number }) => (
-    <div className="h-2 w-full rounded-full bg-gray-100">
-      <div
-        className="h-2 rounded-full"
-        style={{
-          width: `${Math.max(0, Math.min(100, value))}%`,
-          background: `linear-gradient(90deg, ${brand.gradFrom}, ${brand.gradTo})`,
-        }}
-      />
-    </div>
-  );
 
   return (
     <main
@@ -391,7 +311,7 @@ function envAdvice(percent: number): { intro: string; bullets: string[] } {
           </p>
         </div>
 
-        {/* ✅ رسالة عدم وجود بيانات (بدون return مبكر) */}
+        {/* عدم وجود بيانات */}
         {!hasData && (
           <div className="text-center rounded-2xl p-6" style={{ border: `1px solid ${brand.cardBorder}`, background: "#fbfaff" }}>
             <p className="text-gray-700">🚫 لم يتم العثور على نتائج.</p>
@@ -401,15 +321,11 @@ function envAdvice(percent: number): { intro: string; bullets: string[] } {
           </div>
         )}
 
-        {/* بقية المحتوى يُعرض فقط عند وجود بيانات */}
         {hasData && (
           <>
             {/* فقرة سردية */}
             {narrative?.length ? (
-              <div
-                className="rounded-2xl p-5 mb-8"
-                style={{ border: `1px solid ${brand.cardBorder}`, background: "#fbfaff" }}
-              >
+              <div className="rounded-2xl p-5 mb-8" style={{ border: `1px solid ${brand.cardBorder}`, background: "#fbfaff" }}>
                 {narrative.map((p: string, i: number) => (
                   <p key={i} className="text-[0.98rem] leading-8 mb-2" style={{ color: brand.ink }}>
                     <span dangerouslySetInnerHTML={{ __html: p }} />
@@ -420,9 +336,7 @@ function envAdvice(percent: number): { intro: string; bullets: string[] } {
 
             {/* الذكاءات المتعددة */}
             <section className="mb-8">
-              <h2 className="text-xl font-semibold mb-2" style={{ color: brand.ink }}>
-                الذكاءات المتعددة
-              </h2>
+              <h2 className="text-xl font-semibold mb-2" style={{ color: brand.ink }}>الذكاءات المتعددة</h2>
               <div className="space-y-3">
                 {Object.entries(mi.result).map(([k, v]) => (
                   <div key={k} className="rounded-xl p-3" style={{ border: "1px solid #f0f0f5" }}>
@@ -444,9 +358,7 @@ function envAdvice(percent: number): { intro: string; bullets: string[] } {
 
             {/* VAK */}
             <section className="mb-8">
-              <h2 className="text-xl font-semibold mb-2" style={{ color: brand.ink }}>
-                أنماط التعلم (VAK)
-              </h2>
+              <h2 className="text-xl font-semibold mb-2" style={{ color: brand.ink }}>أنماط التعلم (VAK)</h2>
               <div className="grid gap-3 md:grid-cols-3">
                 {(Object.entries(vak.percent) as Array<[keyof VAK["percent"], number]>).map(([k, v]) => (
                   <div key={k} className="rounded-xl p-3" style={{ border: "1px solid #f0f0f5" }}>
@@ -461,7 +373,7 @@ function envAdvice(percent: number): { intro: string; bullets: string[] } {
               </div>
               {vak.ranking?.[0] && (
                 <p className="mt-2 text-sm text-gray-600">
-                  النمط الأقوى: {vakLabel[vak.ranking[0] as keyof VAK["percent"]] || vak.ranking[0]}
+                  النمط الأقوى: {vakLabel[vak.ranking[0] as keyof VAK["percent"]] || String(vak.ranking[0])}
                 </p>
               )}
             </section>
@@ -487,56 +399,69 @@ function envAdvice(percent: number): { intro: string; bullets: string[] } {
 
             {/* البيئة الأسرية */}
             <section className="mb-8">
-              <h2 className="text-xl font-semibold mb-2" style={{ color: brand.ink }}>
-                البيئة الأسرية والدعم
-              </h2>
+              <h2 className="text-xl font-semibold mb-2" style={{ color: brand.ink }}>البيئة الأسرية والدعم</h2>
               <div className="rounded-xl p-4" style={{ border: "1px solid #f0f0f5" }}>
                 <p className="text-gray-700">
                   مستوى الدعم: <strong>{env.level}</strong> ({env.supportPercent}%)
                 </p>
-
                 <Bar value={env.supportPercent} />
-
-                {/* تعريف واضح لما تعنيه النسبة */}
                 <p className="text-sm text-gray-600 mt-3">
-                 <strong>ما معنى هذه النسبة؟ </strong>  
-   هي درجة توضّح مدى تهيئة البيئة المنزلية لدعم تعلّم ونمو الطفل وتم احتسابها بناءً على إجاباتك.
-  كلما كانت النسبة أعلى، دلَّ ذلك على أن البيئة المنزلية داعمة ومعززة للطفل.
-               </p>
-               
-               
-              {/* كيف أرفع النسبة؟ (تلقائي حسب المستوى) */}
-    {(() => {
-      const tips = envAdvice(env.supportPercent);
-      return (
-        <div className="mt-3 rounded-lg bg-[#fbfaff] p-3" style={{ border: `1px solid ${brand.cardBorder}` }}>
-          <p className="text-[0.95rem] font-medium" style={{ color: brand.ink }}>
-            كيف أرفع النسبة؟
-          </p>
-          <p className="text-sm text-gray-600 mt-1">{tips.intro}</p>
-          <ul className="list-disc pr-5 mt-2 space-y-1 text-sm text-gray-700">
-            {tips.bullets.map((b, i) => (<li key={i}>{b}</li>))}
-          </ul>
-        </div>
-      );
-    })()}
-  </div>
-</section>
-              
+                  <strong>ما معنى هذه النسبة؟</strong> هي درجة توضّح مدى تهيئة البيئة المنزلية لدعم تعلّم ونمو الطفل وتم احتسابها بناءً على إجاباتك. كلما كانت النسبة أعلى، دلَّ ذلك على أن البيئة المنزلية داعمة ومعززة للطفل.
+                </p>
+                {(() => {
+                  const tips = envAdvice(env.supportPercent);
+                  return (
+                    <div className="mt-3 rounded-lg bg-[#fbfaff] p-3" style={{ border: `1px solid ${brand.cardBorder}` }}>
+                      <p className="text-[0.95rem] font-medium" style={{ color: brand.ink }}>كيف أرفع النسبة؟</p>
+                      <p className="text-sm text-gray-600 mt-1">{tips.intro}</p>
+                      <ul className="list-disc pr-5 mt-2 space-y-1 text-sm text-gray-700">
+                        {tips.bullets.map((b, i) => (<li key={i}>{b}</li>))}
+                      </ul>
+                    </div>
+                  );
+                })()}
+              </div>
+            </section>
 
-            {/* التوصيات السريعة */}
+            {/* التوصيات السريعة للطفل */}
             {recs?.length > 0 && (
               <section className="mb-8">
-                <h2 className="text-xl font-semibold mb-2" style={{ color: brand.ink }}>
-                  ماذا أفعل الآن؟ 💡
-                </h2>
+                <h2 className="text-xl font-semibold mb-2" style={{ color: brand.ink }}>ماذا أفعل الآن؟ 💡</h2>
                 <ul className="list-disc pr-6 space-y-2 text-gray-700">
-                  {recs.map((r: string, i: number) => (
-                    <li key={i}>{r}</li>
-                  ))}
+                  {recs.map((r: string, i: number) => <li key={i}>{r}</li>)}
                 </ul>
               </section>
             )}
+
+            {/* إرشادات للوالدين (للأسرة/للأم/للأب) */}
+            {(parent?.forFamily?.length || parent?.forMother?.length || parent?.forFather?.length) ? (
+              <section className="mb-8">
+                <h2 className="text-xl font-semibold mb-2" style={{ color: brand.ink }}>إرشادات للوالدين</h2>
+                <p className="text-sm mb-4" style={{ color: brand.sub }}>
+                  نصائح عملية مبنية على شخصية {childName} ونمط تعلّمه وذكاءاته ومستوى الدعم الأسري.
+                </p>
+                <div className="grid md:grid-cols-3 gap-4">
+                  <div className="rounded-xl p-4" style={{ border: "1px solid #f0f0f5" }}>
+                    <h3 className="font-semibold mb-2">للأسرة</h3>
+                    <ul className="list-disc pr-5 space-y-1 text-sm text-gray-700">
+                      {(parent?.forFamily || []).map((t, i) => <li key={`fam-${i}`}>{t}</li>)}
+                    </ul>
+                  </div>
+                  <div className="rounded-xl p-4" style={{ border: "1px solid #f0f0f5" }}>
+                    <h3 className="font-semibold mb-2">للأم</h3>
+                    <ul className="list-disc pr-5 space-y-1 text-sm text-gray-700">
+                      {(parent?.forMother || []).map((t, i) => <li key={`mom-${i}`}>{t}</li>)}
+                    </ul>
+                  </div>
+                  <div className="rounded-xl p-4" style={{ border: "1px solid #f0f0f5" }}>
+                    <h3 className="font-semibold mb-2">للأب</h3>
+                    <ul className="list-disc pr-5 space-y-1 text-sm text-gray-700">
+                      {(parent?.forFather || []).map((t, i) => <li key={`dad-${i}`}>{t}</li>)}
+                    </ul>
+                  </div>
+                </div>
+              </section>
+            ) : null}
 
             {/* الخطة الأسبوعية */}
             <section className="mb-6">
@@ -545,11 +470,7 @@ function envAdvice(percent: number): { intro: string; bullets: string[] } {
               </h2>
               <div className="grid gap-4 md:grid-cols-2">
                 {weeklyPlan.map(({ day, items }) => (
-                  <div
-                    key={day}
-                    className="rounded-2xl p-4"
-                    style={{ border: `1px solid ${brand.cardBorder}`, background: "#ffffff" }}
-                  >
+                  <div key={day} className="rounded-2xl p-4" style={{ border: `1px solid ${brand.cardBorder}`, background: "#ffffff" }}>
                     <div
                       className="inline-flex items-center justify-center rounded-xl px-3 py-1 text-white text-sm font-semibold mb-3"
                       style={{ background: `linear-gradient(90deg, ${brand.gradFrom}, ${brand.gradTo})` }}
@@ -557,9 +478,7 @@ function envAdvice(percent: number): { intro: string; bullets: string[] } {
                       {day}
                     </div>
                     <ul className="list-disc pr-5 space-y-1 text-[0.95rem]" style={{ color: brand.sub }}>
-                      {items.map((it, i) => (
-                        <li key={i}>{it}</li>
-                      ))}
+                      {items.map((it, i) => <li key={i}>{it}</li>)}
                     </ul>
                   </div>
                 ))}
@@ -571,7 +490,7 @@ function envAdvice(percent: number): { intro: string; bullets: string[] } {
           </>
         )}
 
-        {/* أزرار إجراء (تظهر دائمًا) */}
+        {/* أزرار الإجراء */}
         <div className="flex flex-wrap items-center justify-center gap-3 mt-8">
           <a
             href="/"
