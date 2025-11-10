@@ -3,20 +3,22 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { formSections, Section, LIKERT_5 } from "./form-data";
 
-// ===== أنواع محلية =====
+/** ================= أنواع محلية ================= */
 type Ans = Record<string, string | string[]>;
 
-// ===== تحقق البريد/الهاتف =====
+/** ================= تحقق البريد/الهاتف ================= */
 function isValidEmail(v: string) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((v || "").trim()); }
-// 9–15 أرقام (دولي مبسّط)
 function isValidPhone(v: string) { const d = (v || "").replace(/[^\d]/g, ""); return d.length >= 9 && d.length <= 15; }
 
-// ===== تحويلات Likert =====
+/** ================= تحويلات Likert ================= */
 function likertToNum(v: string): number { const i = LIKERT_5.indexOf((v || "").trim()); return i >= 0 ? i : 0; } // 0..4
 function likertToScore(v: string): number { return likertToNum(v) - 2; } // -2..+2
 
-// ===== MI mapping =====
-const MI_FROM_INTERESTS: Record<string, "musical" | "bodily" | "logical" | "naturalist" | "spatial" | "linguistic" | "interpersonal" | "intrapersonal"> = {
+/** ================= MI mapping ================= */
+const MI_FROM_INTERESTS: Record<
+  string,
+  "musical" | "bodily" | "logical" | "naturalist" | "spatial" | "linguistic" | "interpersonal" | "intrapersonal"
+> = {
   i_music: "musical",
   i_physical: "bodily",
   i_puzzles: "logical",
@@ -127,13 +129,18 @@ function computeEnvironment(ans: Record<string, any>) {
   const sum = scores.reduce((a, b) => a + b, 0);
   const max = ids.length * 4;
   const percent = Math.round((sum / max) * 100);
-  let level = "متوسط";
+  let level: "منخفض" | "متوسط" | "عال" = "متوسط";
   if (percent >= 66) level = "عال";
   else if (percent <= 33) level = "منخفض";
   return { supportScore: sum, supportPercent: percent, level };
 }
 
-function generateRecommendations(miRank: string[], vak: ReturnType<typeof computeVAK>, big5: ReturnType<typeof computeBigFive>, goals: Record<string, any>) {
+function generateRecommendations(
+  miRank: string[],
+  vak: ReturnType<typeof computeVAK>,
+  big5: ReturnType<typeof computeBigFive>,
+  goals: Record<string, any>
+) {
   const topMi = miRank.slice(0, 3);
   const vakTop = vak.ranking[0];
   const goal = String(goals.priority_dev || "");
@@ -178,12 +185,15 @@ export default function AssessmentPage() {
   const totalSteps = formSections.length;
   const current = formSections[step];
 
-  // تحميل محلي
+  /** تحميل محلي */
   useEffect(() => {
-    try { const saved = localStorage.getItem("arouma_answers"); if (saved) setAnswers(JSON.parse(saved)); } catch {}
+    try {
+      const saved = localStorage.getItem("arouma_answers");
+      if (saved) setAnswers(JSON.parse(saved));
+    } catch {}
   }, []);
 
-  // حفظ محلي (debounce)
+  /** حفظ محلي (debounce) */
   useEffect(() => {
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => {
@@ -192,16 +202,16 @@ export default function AssessmentPage() {
     return () => { if (saveTimer.current) clearTimeout(saveTimer.current); };
   }, [answers]);
 
-  // تمرير لأعلى عند تغيير القسم
+  /** تمرير لأعلى عند تغيير القسم */
   useEffect(() => { window.scrollTo({ top: 0, behavior: "smooth" }); }, [step]);
 
+  /** تحقق القسم الحالي */
   const requiredIds = useMemo(
     () => current.questions.filter((q) => q.required).map((q) => q.id),
     [current]
   );
 
   const isStepValid = useMemo(() => {
-    // تحقق عام
     const baseValid = requiredIds.every((id) => {
       const q = current.questions.find((qq) => qq.id === id);
       const v = answers[id];
@@ -214,7 +224,6 @@ export default function AssessmentPage() {
     });
     if (!baseValid) return false;
 
-    // تحقق شرطي للقسم الأساسي
     if (current.id === "basic") {
       const diagFlag = String(answers["diagnosis_flag"] || "");
       const therapy = String(answers["therapy"] || "");
@@ -238,57 +247,103 @@ export default function AssessmentPage() {
 
   const goPrev = useCallback(() => setStep((s) => Math.max(0, s - 1)), []);
 
+  /** ================= الإرسال ================= */
   const handleSubmit = useCallback(async () => {
-    if (loading) return; // حارس double-click
+    if (loading) return;
     if (!isStepValid) { setErrorMsg("رجاءً أكمل الحقول المطلوبة قبل الإرسال."); return; }
     setLoading(true); setErrorMsg(null);
+
     try {
+      // 1) احسب النتائج
       const { result: miRes, ranking: miRanking } = computeMiScores(answers);
       const vak = computeVAK(answers);
       const big5 = computeBigFive(answers);
       const env = computeEnvironment(answers);
       const recs = generateRecommendations(miRanking, vak, big5, { priority_dev: answers["priority_dev"] });
 
+      // 2) مسطّح للإرسال
       const miFlat: Record<string, string | number> = {};
-      Object.entries(miRes).forEach(([cat, v]) => { miFlat[`mi_${cat}_sum`] = v.sum; miFlat[`mi_${cat}_max`] = v.max; miFlat[`mi_${cat}_percent`] = v.percent; });
-      miFlat["mi_rank_1"] = miRanking[0] ?? ""; miFlat["mi_rank_2"] = miRanking[1] ?? ""; miFlat["mi_rank_3"] = miRanking[2] ?? "";
+      Object.entries(miRes).forEach(([cat, v]) => {
+        miFlat[`mi_${cat}_sum`] = v.sum;
+        miFlat[`mi_${cat}_max`] = v.max;
+        miFlat[`mi_${cat}_percent`] = v.percent;
+      });
+      miFlat["mi_rank_1"] = miRanking[0] ?? "";
+      miFlat["mi_rank_2"] = miRanking[1] ?? "";
+      miFlat["mi_rank_3"] = miRanking[2] ?? "";
 
       const vakFlat = {
-        vak_visual_rel: vak.percent.visual, vak_auditory_rel: vak.percent.auditory, vak_kinesthetic_rel: vak.percent.kinesthetic,
-        vak_visual_abs: vak.absolute.visual, vak_auditory_abs: vak.absolute.auditory, vak_kinesthetic_abs: vak.absolute.kinesthetic,
+        vak_visual_rel: vak.percent.visual,
+        vak_auditory_rel: vak.percent.auditory,
+        vak_kinesthetic_rel: vak.percent.kinesthetic,
+        vak_visual_abs: vak.absolute.visual,
+        vak_auditory_abs: vak.absolute.auditory,
+        vak_kinesthetic_abs: vak.absolute.kinesthetic,
         vak_top: vak.ranking[0] ?? "",
       };
-      const big5Flat = { big5_E: big5.percent.E, big5_O: big5.percent.O, big5_A: big5.percent.A, big5_C: big5.percent.C, big5_N: big5.percent.N };
-      const envFlat = { env_support_score: env.supportScore, env_support_percent: env.supportPercent, env_level: env.level };
-      const recsFlat: Record<string, string> = {}; recs.forEach((r, i) => (recsFlat[`rec_${i + 1}`] = r));
+      const big5Flat = {
+        big5_E: big5.percent.E, big5_O: big5.percent.O, big5_A: big5.percent.A, big5_C: big5.percent.C, big5_N: big5.percent.N
+      };
+      const envFlat = {
+        env_support_score: env.supportScore, env_support_percent: env.supportPercent, env_level: env.level
+      };
+      const recsFlat: Record<string, string> = {};
+      recs.forEach((r, i) => (recsFlat[`rec_${i + 1}`] = r));
 
+      const flatAnswers = { ...answers, ...miFlat, ...vakFlat, ...big5Flat, ...envFlat, ...recsFlat };
+
+      // 3) حمولة موّحدة
       const payload = {
-        answers: { ...answers, ...miFlat, ...vakFlat, ...big5Flat, ...envFlat, ...recsFlat },
+        answers: flatAnswers,
         meta: {
           progress: `${step + 1}/${totalSteps}`,
           submittedAt: new Date().toISOString(),
           userAgent: typeof navigator !== "undefined" ? navigator.userAgent : "",
           locale: typeof navigator !== "undefined" ? navigator.language : "ar",
         },
+        // النتائج المفصّلة للاستخدام المحلي/العرض لاحقًا
+        results: { mi: { result: miRes, ranking: miRanking }, vak, big5, environment: env, recs },
       };
 
-      const res = await fetch("/api/submit", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || (data && data.ok === false)) throw new Error(data?.message || "تعذر الإرسال، حاول لاحقًا.");
-
+      // 4) حفظ محلي دائم (لا يعتمد على الشبكة)
       try {
-        localStorage.setItem("arouma_last_results", JSON.stringify({ mi: { result: miRes, ranking: miRanking }, vak, big5, environment: env, recs }));
-      } catch {}
-      localStorage.removeItem("arouma_answers");
+        localStorage.setItem("arouma_last_results", JSON.stringify(payload.results));
+        const historyRaw = localStorage.getItem("arouma_submissions");
+        const history: any[] = historyRaw ? JSON.parse(historyRaw) : [];
+        history.push(payload);
+        localStorage.setItem("arouma_submissions", JSON.stringify(history));
+      } catch (e) {
+        console.warn("LocalStorage failed:", e);
+      } finally {
+        try { localStorage.removeItem("arouma_answers"); } catch {}
+      }
+
+      // 5) محاولة مزامنة Google Sheets — لا توقف التجربة عند الفشل
+      try {
+        const res = await fetch("/api/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ answers: payload.answers, meta: payload.meta }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || data?.ok === false) {
+          console.warn("Google Sheets sync failed:", data?.error || res.status);
+        }
+      } catch (err) {
+        console.warn("Google Sheets unreachable:", err);
+      }
+
+      // 6) انتقل لصفحة الشكر دائمًا
       window.location.href = "/thank-you";
+
     } catch (err: any) {
-      setErrorMsg(err?.message || "تعذر الاتصال بالخادم.");
+      setErrorMsg(err?.message || "تعذر إتمام العملية.");
     } finally {
       setLoading(false);
     }
   }, [answers, isStepValid, loading, step, totalSteps]);
 
-  // ========== الواجهة ==========
+  /** ================= الواجهة ================= */
   return (
     <main dir="rtl" className="min-h-screen text-[var(--flw-text)] p-6 md:p-12">
       <div className="max-w-4xl mx-auto">
@@ -322,7 +377,6 @@ export default function AssessmentPage() {
                   (q.type === "email" && typeof val === "string" && val && !isValidEmail(val)) ||
                   (q.type === "phone" && typeof val === "string" && val && !isValidPhone(val)));
 
-              // إخفاء/تعطيل حقول التفاصيل عند "لا"
               const hideDiagnosis = q.id === "diagnosis_details" && String(answers["diagnosis_flag"] || "") !== "نعم";
               const hideTherapy = q.id === "therapy_details" && String(answers["therapy"] || "") !== "نعم";
               if (hideDiagnosis || hideTherapy) return null;
@@ -346,7 +400,11 @@ export default function AssessmentPage() {
                           onChange={() => handleChange(q.id, opt)}
                           className="text-purple-600 focus:ring-purple-500"
                         />
-                        <label htmlFor={inputId} className="ml-2 cursor-pointer rounded-xl border px-3 py-2 inline-block" style={{ borderColor: "var(--flw-line)", color: "var(--flw-sub)" }}>
+                        <label
+                          htmlFor={inputId}
+                          className="ml-2 cursor-pointer rounded-xl border px-3 py-2 inline-block"
+                          style={{ borderColor: "var(--flw-line)", color: "var(--flw-sub)" }}
+                        >
                           {opt}
                         </label>
                       </div>
@@ -370,7 +428,11 @@ export default function AssessmentPage() {
                           }}
                           className="text-purple-600 focus:ring-purple-500"
                         />
-                        <label htmlFor={inputId} className="ml-2 cursor-pointer rounded-xl border px-3 py-2 inline-block" style={{ borderColor: "var(--flw-line)", color: "var(--flw-sub)" }}>
+                        <label
+                          htmlFor={inputId}
+                          className="ml-2 cursor-pointer rounded-xl border px-3 py-2 inline-block"
+                          style={{ borderColor: "var(--flw-line)", color: "var(--flw-sub)" }}
+                        >
                           {opt}
                         </label>
                       </div>
