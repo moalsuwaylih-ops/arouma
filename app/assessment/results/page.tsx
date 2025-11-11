@@ -1,17 +1,18 @@
 "use client";
+
 import ResultsContent from "@/app/components/ResultsContent";
+import { useEffect, useMemo, useState } from "react";
 
 export default function Page() {
   return (
     <>
-      <ResultsExtras />   {/* هذا هو الشريط العلوي */}
-      <ResultsContent />  {/* هذا هو محتوى النتائج الحالي */}
+      <ResultsExtras />   {/* الشريط العلوي */}
+      <ResultsContent />  {/* صفحة النتائج الحالية كما هي */}
     </>
   );
 }
-// === إضافة شريط أدوات النتائج (لا يغيّر تنسيق صفحتك) ===
-import { useEffect, useMemo, useState } from "react";
 
+// === إضافة شريط أدوات النتائج (لا يغيّر تنسيق صفحتك) ===
 function ResultsExtras() {
   const [prev, setPrev] = useState<any | null>(null);
   const [open, setOpen] = useState(false);
