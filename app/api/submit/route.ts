@@ -1,55 +1,93 @@
 // app/api/submit/route.ts
 import { NextResponse } from "next/server";
 
-// اجبر المعالجة ديناميكية (مهم مع App Router)
 export const dynamic = "force-dynamic";
 
-// الأفضل استخدام متغير سري SHEET_URL في الخادم
-const SHEET_URL = process.env.SHEET_URL || process.env.NEXT_PUBLIC_SHEET_URL;
+// سرّ السيرفر (لا تستخدم NEXT_PUBLIC_* في الإنتاج)
+const SHEET_URL = process.env.SHEET_URL || ""; 
+const ALLOWED_ORIGINS = [
+  "http://localhost:3000",
+  process.env.NEXT_PUBLIC_APP_ORIGIN || "", // ضع دومين الإنتاج هنا .env.local
+].filter(Boolean);
+
+type JsonVal = string | number | boolean | null;
+type Dict = Record<string, JsonVal>;
+
+function sanitize(obj: Record<string, any> | undefined | null): Dict {
+  const out: Dict = {};
+  if (!obj || typeof obj !== "object") return out;
+  for (const [k, v] of Object.entries(obj)) {
+    if (typeof k !== "string") continue;
+    const key = k.slice(0, 128);
+    if (typeof v === "string") out[key] = v.slice(0, 5000);
+    else if (typeof v === "number" || typeof v === "boolean" || v === null) out[key] = v;
+    else out[key] = String(v).slice(0, 5000);
+  }
+  return out;
+}
+
+export async function OPTIONS() {
+  // CORS مبسّط (للبيئة المحلية/الإنتاج)
+  return new NextResponse(null, {
+    headers: {
+      "Access-Control-Allow-Origin": ALLOWED_ORIGINS[0] || "*",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
+      "Access-Control-Max-Age": "86400",
+    },
+  });
+}
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const answers = body?.answers ?? {};
-    const meta = body?.meta ?? {};
-
-    // إن وُجد Webhook/Sheet، أرسل له (لا كاش)
-    if (SHEET_URL) {
-      try {
-        const res = await fetch(SHEET_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ answers, meta }),
-          // @ts-ignore
-          next: { revalidate: 0 },
-        });
-
-        const data = await res.json().catch(() => ({}));
-        if (!res.ok) {
-          // نرجّع ok:true لكن نوضح أن المزامنة فشلت — لا نعطّل الواجهة الأمامية
-          return NextResponse.json(
-            { ok: true, synced: false, error: data?.error || `Upstream ${res.status}` },
-            { status: 200 }
-          );
-        }
-
-        return NextResponse.json({ ok: true, synced: true, result: data });
-      } catch (err: any) {
-        // الشبكة فشلت — نرجّع ok:true مع synced:false
-        return NextResponse.json(
-          { ok: true, synced: false, error: err?.message || "Network error" },
-          { status: 200 }
-        );
-      }
+    // فحص المصدر (Origin)
+    const origin = req.headers.get("origin") || "";
+    if (ALLOWED_ORIGINS.length && !ALLOWED_ORIGINS.includes(origin)) {
+      return NextResponse.json({ ok: false, error: "Origin not allowed" }, { status: 403 });
     }
 
-    // لا يوجد SHEET_URL — نرجّع OK كتجربة محلية
-    console.log("Arouma submission (local only):", { answers, meta });
-    return NextResponse.json({ ok: true, mocked: true });
+    const body = await req.json().catch(() => ({} as any));
+    const answers = sanitize(body?.answers);
+    const meta = sanitize(body?.meta);
+
+    // التجربة المحلية بدون ورقة Google
+    if (!SHEET_URL) {
+      console.warn("SHEET_URL not set. Skipping remote sync.");
+      return NextResponse.json({ ok: true, mocked: true });
+    }
+
+    // إرسال إلى Google Apps Script / أي Webhook آخر
+    const resp = await fetch(SHEET_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      // منع الكاش مهما كان
+      cache: "no-store",
+      body: JSON.stringify({ answers, meta }),
+      // مهلة قصيرة حتى لا تتأثر تجربة المستخدم
+      signal: (AbortSignal as any).timeout?.(5000) ?? undefined,
+      // إلغاء إعادة التحقق (احتياط مع Next)
+      // @ts-ignore
+      next: { revalidate: 0 },
+    }).catch((e) => {
+      console.warn("Upstream unreachable:", e);
+      return null;
+    });
+
+    if (!resp) {
+      return NextResponse.json({ ok: true, synced: false, error: "network" }, { status: 200 });
+    }
+
+    const data = await resp.json().catch(() => ({}));
+    if (!resp.ok) {
+      return NextResponse.json(
+        { ok: true, synced: false, error: data?.error || `upstream ${resp.status}` },
+        { status: 200 }
+      );
+    }
+
+    return NextResponse.json({ ok: true, synced: true, result: data }, { status: 200 });
   } catch (e: any) {
-    return NextResponse.json(
-      { ok: false, error: e?.message || "خطأ أثناء الإرسال" },
-      { status: 400 }
-    );
+    console.error("submit error:", e);
+    return NextResponse.json({ ok: false, error: e?.message || "Server error" }, { status: 500 });
   }
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { formSections, Section, LIKERT_5 } from "./form-data";
 
 /** ================= أنواع محلية ================= */
@@ -176,6 +177,8 @@ function generateRecommendations(
 }
 
 export default function AssessmentPage() {
+  const router = useRouter();
+
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Ans>({});
   const [loading, setLoading] = useState(false);
@@ -301,11 +304,10 @@ export default function AssessmentPage() {
           userAgent: typeof navigator !== "undefined" ? navigator.userAgent : "",
           locale: typeof navigator !== "undefined" ? navigator.language : "ar",
         },
-        // النتائج المفصّلة للاستخدام المحلي/العرض لاحقًا
         results: { mi: { result: miRes, ranking: miRanking }, vak, big5, environment: env, recs },
       };
 
-      // 4) حفظ محلي دائم (لا يعتمد على الشبكة)
+      // 4) حفظ محلي دائم
       try {
         localStorage.setItem("arouma_last_results", JSON.stringify(payload.results));
         const historyRaw = localStorage.getItem("arouma_submissions");
@@ -320,28 +322,32 @@ export default function AssessmentPage() {
 
       // 5) محاولة مزامنة Google Sheets — لا توقف التجربة عند الفشل
       try {
+        console.log("[Arouma] POST /api/submit …", payload.meta);
         const res = await fetch("/api/submit", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          cache: "no-store",
           body: JSON.stringify({ answers: payload.answers, meta: payload.meta }),
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok || data?.ok === false) {
-          console.warn("Google Sheets sync failed:", data?.error || res.status);
+          console.warn("Sheets sync failed:", data?.error || res.status);
+        } else {
+          console.log("Sheets sync ok:", data);
         }
       } catch (err) {
-        console.warn("Google Sheets unreachable:", err);
+        console.warn("Sheets unreachable:", err);
       }
 
-      // 6) انتقل لصفحة الشكر دائمًا
-      window.location.href = "/thank-you";
+      // 6) الانتقال لصفحة النتائج (يظهر POST أولًا في Network)
+      router.push("/assessment/results?submitted=1");
 
     } catch (err: any) {
       setErrorMsg(err?.message || "تعذر إتمام العملية.");
     } finally {
       setLoading(false);
     }
-  }, [answers, isStepValid, loading, step, totalSteps]);
+  }, [answers, isStepValid, loading, step, totalSteps, router]);
 
   /** ================= الواجهة ================= */
   return (
