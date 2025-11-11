@@ -580,16 +580,25 @@ export default function ResultsContent() {
   const [answers, setAnswers] = useState<Record<string, any> | null>(null);
   const [todayTask, setTodayTask] = useState<string>(""); // الشريط السفلي
 
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem("arouma_last_results");
-      if (saved) setData(JSON.parse(saved));
-    } catch {}
-    try {
-      const ans = localStorage.getItem("arouma_answers");
-      if (ans) setAnswers(JSON.parse(ans));
-    } catch {}
-  }, []);
+useEffect(() => {
+  try {
+    const saved = localStorage.getItem("arouma_last_results");
+    if (saved) setData(JSON.parse(saved));
+  } catch {}
+
+  try {
+    // أولًا: حاول قراءة الأجوبة النشطة
+    const ans = localStorage.getItem("arouma_answers");
+    if (ans) {
+      setAnswers(JSON.parse(ans));
+    } else {
+      // ثانيًا: استخدم النسخة الخفيفة المحفوظة بعد الإرسال
+      const last = localStorage.getItem("arouma_last_answers");
+      if (last) setAnswers(JSON.parse(last));
+    }
+  } catch {}
+}, []);
+
 
   const band = useMemo(() => pickAgeBand(answers), [answers]);
 
